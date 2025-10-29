@@ -48,12 +48,14 @@ export default function Schedule({
 }) {
   const adminMail = process.env.NEXT_PUBLIC_ADMIN_EMAIL?.split(",") || [];
 
-  console.log(adminMail);
   const nameNonAuth = session?.user?.name || "";
   const email = session?.user?.email || "";
-  const name = employees.find((e) => e.email === email)?.name || "";
+
+  const name =
+    employees.find((e) => e.mail === email)?.name.split(" ")[1] || "";
+
   const isAuth =
-    employees.find((e) => e.email === email) ||
+    employees.find((e) => e.mail === email) ||
     adminMail.includes(email) ||
     false;
   const KEY_PREFIX = "schedule-data";
