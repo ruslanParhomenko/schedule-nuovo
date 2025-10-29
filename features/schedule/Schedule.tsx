@@ -46,10 +46,16 @@ export default function Schedule({
   session: any;
   employees: any[];
 }) {
+  const adminMail = process.env.NEXT_PUBLIC_ADMIN_EMAIL?.split(",") || [];
+
+  console.log(adminMail);
   const nameNonAuth = session?.user?.name || "";
   const email = session?.user?.email || "";
   const name = employees.find((e) => e.email === email)?.name || "";
-  const isAuth = employees.find((e) => e.email === email) || false;
+  const isAuth =
+    employees.find((e) => e.email === email) ||
+    adminMail.includes(email) ||
+    false;
   const KEY_PREFIX = "schedule-data";
 
   // set local storage
@@ -59,7 +65,7 @@ export default function Schedule({
   // form
   const currentYear = new Date().getFullYear().toString();
   const form = useForm({
-    defaultValues: selected || { month: "", role: "", year: currentYear },
+    defaultValues: selected || { month: "", year: currentYear },
   });
 
   // state schedule
@@ -136,7 +142,7 @@ export default function Schedule({
                 : "flex flex-col items-center gap-10 justify-center h-screen"
             )}
           >
-            {!name && nameNonAuth && (
+            {!isAuth && nameNonAuth && (
               <Label className="text-rd text-center">
                 Привет {nameNonAuth.split(" ")[0]} просьба отправить свою почту
                 для получения расписания
