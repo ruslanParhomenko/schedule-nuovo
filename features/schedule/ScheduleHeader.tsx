@@ -6,25 +6,27 @@ export default function ScheduleHeader({
   monthDays,
   setSelectedColumn,
   month,
+  isFooter,
 }: {
   monthDays: MonthDayType[];
   setSelectedColumn?: (index: number) => void;
   month?: string;
+  isFooter?: boolean;
 }) {
   const todayDay = new Date().getDate();
 
   return (
     <TableHeader>
       <TableRow>
-        <TableCell className="w-36 p-0 front-bold text-center sticky left-0 bg-card">
-          {month?.toUpperCase() || ""}
+        <TableCell className="w-28 p-0 front-bold text-center sticky left-0 bg-card ">
+          {isFooter ? "" : month?.toUpperCase() || ""}
         </TableCell>
         {monthDays.map((day, index) => {
           return (
             <TableCell
               key={day.day}
               className={cn(
-                "w-10 cursor-pointer p-0",
+                "w-7 cursor-pointer p-0  bg-card",
                 day.day === todayDay && "text-rd front-bold"
               )}
               onClick={() => setSelectedColumn && setSelectedColumn(index)}

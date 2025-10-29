@@ -5,27 +5,16 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 
 import { cn } from "@/lib/utils";
 import { useLocalStorageForm } from "@/hooks/useLocalStorageForm";
-import {
-  color,
-  COLOR_SHIFT,
-  ROLE_URL,
-  SHIFT_OPTIONS,
-  SHIFTS,
-} from "./constants";
-import { usePathname } from "next/navigation";
+import { color } from "./constants";
 import { getMonthDays, MONTHS } from "@/utils/getMonthDays";
 import ScheduleHeader from "./ScheduleHeader";
 import SelectField from "./SelectField";
+import { Button } from "@/components/ui/button";
+import { Label } from "@radix-ui/react-label";
 
 type rowSchiftsType = {
   id: string;
@@ -48,9 +37,19 @@ export type ScheduleData = {
   uniqueKey: string;
 };
 
-export default function Schedule({ schedules }: { schedules: ScheduleData[] }) {
-  const pathname = usePathname();
-
+export default function Schedule({
+  schedules,
+  session,
+  employees,
+}: {
+  schedules: ScheduleData[];
+  session: any;
+  employees: any[];
+}) {
+  const nameNonAuth = session?.user?.name || "";
+  const email = session?.user?.email || "";
+  const name = employees.find((e) => e.email === email)?.name || "";
+  const isAuth = employees.find((e) => e.email === email) || false;
   const KEY_PREFIX = "schedule-data";
 
   // set local storage
@@ -81,7 +80,7 @@ export default function Schedule({ schedules }: { schedules: ScheduleData[] }) {
       (s: ScheduleData) => s.uniqueKey === uniqueKey
     );
     setSchedule(found || null);
-  }, [uniqueKey]);
+  }, [uniqueKey, schedules]);
 
   const monthDays = useMemo(() => {
     if (!schedule?.month || !schedule?.year) return [];
@@ -103,76 +102,135 @@ export default function Schedule({ schedules }: { schedules: ScheduleData[] }) {
     }
   }, [todayIndex]);
 
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => setIsVisible(true), 300);
+  }, []);
+  useEffect(() => {
+    setIsVisible(false);
+    const timeout = setTimeout(() => setIsVisible(true), 50);
+    return () => clearTimeout(timeout);
+  }, [schedule]);
+
+  const buttonWidth = schedule ? "w-20" : "w-40";
+
+  const handleReset = () => {
+    form.reset({ month: "", role: "", year: currentYear });
+    setSelectedColumn(todayIndex !== -1 ? todayIndex : null);
+  };
+
   return (
     <>
       <Form {...form}>
-        <form className="flex  gap-1 items-center justify-between md:justify-start py-6 px-2">
-          <SelectField
-            fieldName="year"
-            data={YEAR}
-            placeHolder="year"
-            className="w-30"
-            disabled
-          />
-          <SelectField
-            fieldName="month"
-            data={MONTHS}
-            placeHolder="month"
-            className="w-30"
-          />
-          <SelectField
-            fieldName="role"
-            data={ROLE}
-            placeHolder="role"
-            className="w-30"
-          />
+        <form
+          className={cn(
+            "transform transition-all duration-700",
+            isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-0"
+          )}
+        >
+          <div
+            className={cn(
+              schedule
+                ? "flex flex-row sm:flex-row py-4 gap-2 justify-between items-center px-4"
+                : "flex flex-col items-center gap-10 justify-center h-screen"
+            )}
+          >
+            {!name && nameNonAuth && (
+              <Label className="text-rd text-center">
+                Привет {nameNonAuth.split(" ")[0]} просьба отправить свою почту
+                для получения расписания
+              </Label>
+            )}
+            {!schedule && name && (
+              <Label className="text-3xl text-bl">
+                Привет {name.split(" ")[0]}
+              </Label>
+            )}
+            <SelectField
+              fieldName="year"
+              data={YEAR}
+              placeHolder="year"
+              className={buttonWidth}
+              disabled
+            />
+            <SelectField
+              fieldName="month"
+              data={MONTHS}
+              placeHolder="month"
+              className={buttonWidth}
+            />
+            <SelectField
+              fieldName="role"
+              data={ROLE}
+              placeHolder="role"
+              className={buttonWidth}
+              disabled={!isAuth}
+            />
+            <Button className={buttonWidth} onClick={handleReset} type="button">
+              reset
+            </Button>
+          </div>
         </form>
       </Form>
-      {schedule && (
-        <Table className="table-fixed">
-          <ScheduleHeader
-            monthDays={monthDays}
-            setSelectedColumn={setSelectedColumn}
-            month={schedule.month}
-          />
-          <TableBody>
-            {schedule.rowShifts?.map((row, rowIndex) => {
-              const isSelected = !["v", "s", ""].includes(
-                row.shifts?.[selectedColumn as number]
-              );
+      {schedule && isAuth && (
+        <div
+          className={cn(
+            "overflow-x-auto transform transition-all duration-700",
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
+          )}
+        >
+          <Table className="table-fixed min-w-full">
+            <ScheduleHeader
+              monthDays={monthDays}
+              setSelectedColumn={setSelectedColumn}
+              month={schedule.month}
+            />
+            <TableBody>
+              {schedule.rowShifts?.map((row, rowIndex) => {
+                const isSelected = !["v", "s", ""].includes(
+                  row.shifts?.[selectedColumn as number]
+                );
 
-              return (
-                <TableRow key={row.id} className="hover:text-rd">
-                  <TableCell
-                    className={cn(
-                      "sticky left-0 bg-card text-muted-foreground w-36 p-2 h-11",
-                      isSelected && "text-rd font-bold"
-                    )}
-                  >
-                    {row.employee}
-                  </TableCell>
+                return (
+                  <TableRow key={row.id} className="hover:text-rd">
+                    <TableCell
+                      className={cn(
+                        "sticky left-0 bg-card text-muted-foreground p-2 h-9 z-10 truncate",
+                        isSelected && "text-rd font-bold"
+                      )}
+                    >
+                      {row.employee}
+                    </TableCell>
 
-                  {row.shifts?.map((day, dayIndex) => {
-                    const isSelected = dayIndex === selectedColumn;
+                    {row.shifts?.map((day, dayIndex) => {
+                      const isSelected = dayIndex === selectedColumn;
 
-                    return (
-                      <TableCell
-                        key={dayIndex}
-                        className={cn(
-                          "p-0 w-10 text-center border-x",
-                          color[day as keyof typeof color],
-                          isSelected && "text-rd! font-bold"
-                        )}
-                      >
-                        {["/", "v", "s"].includes(day) ? null : day}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+                      return (
+                        <TableCell
+                          key={dayIndex}
+                          className={cn(
+                            "p-0  text-center border-x transition-colors duration-500",
+                            color[day as keyof typeof color],
+                            isSelected && "text-rd! font-bold"
+                          )}
+                        >
+                          {["/", "v", "s"].includes(day) ? null : day}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+            <ScheduleHeader
+              monthDays={monthDays}
+              setSelectedColumn={setSelectedColumn}
+              month={schedule.month}
+              isFooter={true}
+            />
+          </Table>
+        </div>
       )}
     </>
   );
