@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Tag required" }, { status: 400 });
   }
   //@ts-ignore
-  revalidateTag(body.tag, "max");
+  revalidateTag(secret, body.tag);
 
   return NextResponse.json({ message: `Tag ${body.tag} revalidated` });
 }
