@@ -3,17 +3,14 @@ import { revalidateTag } from "next/cache";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const secret = process.env.REVALIDATE_SECRET;
 
-  if (!body.secret || body.secret !== secret) {
+  // проверяем секрет, который хранится в Vercel env
+  if (!body.secret || body.secret !== process.env.REVALIDATE_SECRET) {
     return NextResponse.json({ message: "Invalid secret" }, { status: 401 });
   }
 
-  if (!body.tag) {
-    return NextResponse.json({ message: "Tag required" }, { status: 400 });
-  }
+  // ревалидируем тег
+  revalidateTag("schedule");
 
-  revalidateTag(body.tag);
-
-  return NextResponse.json({ message: `Tag ${body.tag} revalidated` });
+  return NextResponse.json({ message: "Schedule tag revalidated" });
 }
