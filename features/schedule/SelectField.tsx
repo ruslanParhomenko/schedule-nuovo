@@ -58,7 +58,7 @@ function SelectField({
                     data-placeholder=""
                     // className={`${className} flex justify-center min-w-12   [&>svg]:hidden`}
                     className={cn(
-                      "flex justify-center min-w-8 [&>svg]:hidden",
+                      "flex justify-center min-w-8 [&>svg]:hidden p-1",
                       className
                     )}
                     style={style}
@@ -66,12 +66,12 @@ function SelectField({
                     <SelectValue placeholder={placeHolder} />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
+                <SelectContent className="border-bl!">
                   {options.map((item, index) => (
                     <SelectItem
                       key={`${item.value}-${index}`}
                       value={item.value}
-                      className="cursor-pointer"
+                      className="cursor-pointer text-bl shadow-none"
                     >
                       {item.label}
                     </SelectItem>

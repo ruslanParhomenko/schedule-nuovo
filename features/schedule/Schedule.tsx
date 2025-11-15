@@ -46,6 +46,7 @@ export default function Schedule({
   session: any;
   employees: any[];
 }) {
+  console.log(schedules);
   const adminMail = process.env.NEXT_PUBLIC_ADMIN_EMAIL?.split(",") || [];
 
   const nameNonAuth = session?.user?.name || "";
@@ -66,8 +67,11 @@ export default function Schedule({
 
   // form
   const currentYear = new Date().getFullYear().toString();
+  const currentMonth = MONTHS[new Date().getMonth()];
+
+  console.log(currentMonth);
   const form = useForm({
-    defaultValues: selected || { month: "", year: currentYear },
+    defaultValues: selected || { month: currentMonth, year: currentYear },
   });
 
   // state schedule
@@ -100,7 +104,7 @@ export default function Schedule({
   }, [month, setValue, year, role]);
 
   const YEAR = ["2025", "2026", "2027", "2028", "2029", "2030"];
-  const ROLE = ["dish", "restaurant", "cucina"];
+  const ROLE = ["dish", "bar", "cucina"];
 
   const todayDay = new Date().getDate();
   const todayIndex = monthDays.findIndex((day) => day.day === todayDay);
@@ -124,67 +128,16 @@ export default function Schedule({
   const buttonWidth = schedule ? "w-20" : "w-40";
 
   const handleReset = () => {
-    form.reset({ month: "", role: "", year: currentYear });
+    form.reset({ month: currentMonth, role: "", year: currentYear });
     setSelectedColumn(todayIndex !== -1 ? todayIndex : null);
   };
 
   return (
     <>
-      <Form {...form}>
-        <form
-          className={cn(
-            "transform transition-all duration-700",
-            isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-0"
-          )}
-        >
-          <div
-            className={cn(
-              schedule
-                ? "flex flex-row sm:flex-row py-4 gap-2 justify-between items-center px-4"
-                : "flex flex-col items-center gap-10 justify-center h-screen"
-            )}
-          >
-            {!isAuth && nameNonAuth && (
-              <Label className="text-rd text-center">
-                Привет {nameNonAuth.split(" ")[0]} просьба отправить свою почту
-                для получения расписания
-              </Label>
-            )}
-            {!schedule && name && (
-              <Label className="text-3xl text-bl">
-                Привет {name.split(" ")[0]}
-              </Label>
-            )}
-            <SelectField
-              fieldName="year"
-              data={YEAR}
-              placeHolder="year"
-              className={buttonWidth}
-              disabled
-            />
-            <SelectField
-              fieldName="month"
-              data={MONTHS}
-              placeHolder="month"
-              className={buttonWidth}
-            />
-            <SelectField
-              fieldName="role"
-              data={ROLE}
-              placeHolder="role"
-              className={buttonWidth}
-              disabled={!isAuth}
-            />
-            <Button className={buttonWidth} onClick={handleReset} type="button">
-              reset
-            </Button>
-          </div>
-        </form>
-      </Form>
       {schedule && isAuth && (
         <div
           className={cn(
-            "overflow-x-auto transform transition-all duration-700",
+            "overflow-x-auto transform transition-all duration-700 py-8",
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
           )}
         >
@@ -195,16 +148,19 @@ export default function Schedule({
               month={schedule.month}
             />
             <TableBody>
-              {schedule.rowShifts?.map((row, rowIndex) => {
+              {schedule.rowShifts?.map((row) => {
                 const isSelected = !["v", "s", ""].includes(
                   row.shifts?.[selectedColumn as number]
                 );
 
                 return (
-                  <TableRow key={row.id} className="hover:text-rd">
+                  <TableRow
+                    key={row.id}
+                    className="hover:text-rd border-bl/30 "
+                  >
                     <TableCell
                       className={cn(
-                        "sticky left-0 bg-card text-muted-foreground p-2 h-9 z-10 truncate",
+                        "sticky left-0 bg-card text-bl p-2 h-9 z-10 truncate",
                         isSelected && "text-rd font-bold"
                       )}
                     >
@@ -240,6 +196,64 @@ export default function Schedule({
           </Table>
         </div>
       )}
+      <Form {...form}>
+        <form
+          className={cn(
+            "transform transition-all duration-700",
+            isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-0"
+          )}
+        >
+          <div
+            className={cn(
+              schedule
+                ? "flex flex-row sm:flex-row py-4 gap-2 justify-between items-center px-4"
+                : "flex flex-col items-center gap-10 justify-center h-screen"
+            )}
+          >
+            {!isAuth && nameNonAuth && (
+              <Label className="text-rd text-center">
+                Привет {nameNonAuth.split(" ")[0]} просьба отправить свою почту
+                для получения расписания
+              </Label>
+            )}
+            {!schedule && name && (
+              <Label className="text-3xl text-bl">
+                Привет {name.split(" ")[0]}
+              </Label>
+            )}
+            <SelectField
+              fieldName="year"
+              data={YEAR}
+              placeHolder="year"
+              className={cn(buttonWidth, "border-bl text-bl! shadow-bl")}
+              // disabled
+            />
+            <SelectField
+              fieldName="month"
+              data={MONTHS}
+              placeHolder="month"
+              className={cn(buttonWidth, "border-bl text-bl! shadow-bl")}
+            />
+            <SelectField
+              fieldName="role"
+              data={ROLE}
+              placeHolder="role"
+              className={cn(buttonWidth, "border-bl text-bl! shadow-bl")}
+              disabled={!isAuth}
+            />
+            <Button
+              className={cn(
+                buttonWidth,
+                "border-bl bg-bl text-white! shadow-bl"
+              )}
+              onClick={handleReset}
+              type="button"
+            >
+              reset
+            </Button>
+          </div>
+        </form>
+      </Form>
     </>
   );
 }

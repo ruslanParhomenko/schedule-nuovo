@@ -1,5 +1,5 @@
 export const ROLE_URL = {
-  bar: "restaurant",
+  bar: "bar",
   cucina: "cucina",
   dish: "dish",
 };
@@ -28,6 +28,6 @@ export const color = {
   v: "text-bl/40 bg-bl/60 border-0",
   s: "bg-[#facc15]/50 text-bl/40 border-0",
 
-  "/": "text-rd/40 bg-rd/60 border-0",
+  x: "text-rd bg-rd border-0",
 } as const;
 export const SHIFT_OPTIONS = ["7", "8", "9", "14", "18", "19", "20"];
