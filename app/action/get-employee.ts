@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/firebase";
-import { unstable_cache, revalidateTag } from "next/cache";
+import { unstable_cache } from "next/cache";
 
 const _getEmployees = async () => {
   const snapshot = await db.collection("employees").get();
