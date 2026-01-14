@@ -19,7 +19,7 @@ const NavPage = async ({
         <LogOutButton />
       </div>
       <div className="flex flex-1 justify-center items-center">{children}</div>
-      <div className="sticky bottom-2 bg-background">
+      <div className="sticky bottom-6 bg-background">
         <NavMenuHeader />
       </div>
     </div>
