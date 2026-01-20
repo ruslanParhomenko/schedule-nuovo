@@ -1,4 +1,4 @@
-import { updateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 export async function POST(req: Request) {
   try {
@@ -7,7 +7,7 @@ export async function POST(req: Request) {
     if (!tag) {
       return new Response("Missing tag", { status: 400 });
     }
-    updateTag(tag);
+    revalidateTag(tag, "max");
     return Response.json({ ok: true, tag });
   } catch (error) {
     return new Response("Error", { status: 500 });

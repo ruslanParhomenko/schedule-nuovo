@@ -1,8 +1,5 @@
 "use server";
 
-import { db } from "@/lib/firebase";
-import { unstable_cache } from "next/cache";
-
 //type
 type rowShiftsType = {
   id: string;
@@ -26,26 +23,40 @@ export type ScheduleData = {
 };
 
 // get by filters
-export const _getScheduleByMonthYear = async (month: string, year: string) => {
-  const snapshot = await db
-    .collection("schedule")
-    .where("month", "==", month)
-    .where("year", "==", year)
-    .get();
+// export const _getScheduleByMonthYear = async (month: string, year: string) => {
+//   const snapshot = await db
+//     .collection("schedule")
+//     .where("month", "==", month)
+//     .where("year", "==", year)
+//     .get();
 
-  if (snapshot.empty) return [];
+//   if (snapshot.empty) return [];
 
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as ScheduleData[];
-};
+//   return snapshot.docs.map((doc) => ({
+//     id: doc.id,
+//     ...doc.data(),
+//   })) as ScheduleData[];
+// };
 
-export const getScheduleByMonthYear = unstable_cache(
-  _getScheduleByMonthYear,
-  ["schedule"],
-  {
-    revalidate: false,
-    tags: ["schedule"],
-  }
-);
+// export const getScheduleByMonthYear = unstable_cache(
+//   _getScheduleByMonthYear,
+//   ["schedule"],
+//   {
+//     revalidate: false,
+//     tags: ["schedule"],
+//   }
+// );
+
+export async function getScheduleByMonthYear(month: string, year: string) {
+  const res = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/schedule?month=${month}&year=${year}`,
+    {
+      next: {
+        tags: ["schedule"],
+      },
+    },
+  );
+
+  if (!res.ok) throw new Error("Failed to fetch schedule");
+  return res.json();
+}

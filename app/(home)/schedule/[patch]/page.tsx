@@ -39,7 +39,7 @@ export default async function Page({
 
   if (!month || !year) return null;
   const schedule = (await getScheduleByMonthYear(month, year)).find(
-    (s: any) => s.role === patch
+    (s: any) => s.role === patch,
   );
   const monthDays = getMonthDays({ month: month, year: year });
 
