@@ -1,17 +1,21 @@
 "use server";
 
 import { db } from "@/lib/firebase";
-import { unstable_cache } from "next/cache";
+import { redis } from "@/lib/redis";
 
-const _getEmployees = async () => {
+const EMPLOYEES_KEY = "employees";
+
+export async function getEmployees() {
+  const cached = await redis.get(EMPLOYEES_KEY);
+  if (cached) return cached;
+
   const snapshot = await db.collection("employees").get();
-  return snapshot.docs.map((doc) => ({
+  const employees = snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   }));
-};
 
-export const getEmployees = unstable_cache(_getEmployees, ["employees"], {
-  revalidate: false,
-  tags: ["employees"],
-});
+  await redis.set(EMPLOYEES_KEY, employees);
+
+  return employees;
+}
