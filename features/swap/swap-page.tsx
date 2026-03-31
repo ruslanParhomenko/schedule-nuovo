@@ -1,9 +1,26 @@
 "use client";
 
 import { createSwap } from "@/app/action/swap-action";
+import { Session } from "inspector/promises";
 import { useActionState } from "react";
 
-export default function SwapPage() {
+export default function SwapPage({
+  employees,
+  session,
+}: {
+  employees: { id: string; name: string; role: string; mail: string }[];
+  session: { user?: { email?: string } };
+}) {
+  console.log("Employees:", employees);
+  console.log("Session:", session);
+
+  const userRole = employees.find(
+    (emp) => emp.mail === session?.user?.email,
+  )?.role;
+  const userName = employees.find(
+    (emp) => emp.mail === session?.user?.email,
+  )?.name;
+  console.log("User Role:", userRole);
   // initialState должен содержать все поля, которые мы планируем читать
   const initialState = { message: "", error: false };
   const [state, formAction, pending] = useActionState(createSwap, initialState);
@@ -18,9 +35,9 @@ export default function SwapPage() {
         <input
           name="employee1"
           type="text"
-          placeholder="Имя сотрудника 1"
+          value={userName}
           className="border p-2 rounded-md w-64"
-          required
+          disabled
         />
         <input
           name="employee2"
@@ -32,8 +49,8 @@ export default function SwapPage() {
 
         {/* скрытые поля */}
         <input type="hidden" name="date" value={now.toISOString()} />
-        <input type="hidden" name="role" value="default" />
-        <input type="hidden" name="shift" value="day" />
+        <input type="hidden" name="shift" value="default" />
+        <input type="text" name="role" value={userRole} disabled />
         <input type="hidden" name="year" value={defaultYear} />
         <input type="hidden" name="month" value={defaultMonth} />
 
