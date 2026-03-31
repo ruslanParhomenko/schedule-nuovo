@@ -13,13 +13,12 @@ const NavPage = async ({
   const session = await getServerSession(authOptions);
   if (!session) redirect("/");
   return (
-    <div className="pl-2 w-full h-screen flex flex-col">
+    <div className="w-full h-screen flex flex-col">
       <div className="flex justify-center items-center gap-4 py-2 text-xs text-gray-600">
-        <span>привет {session.user?.name}</span>
-        <LogOutButton />
+        <LogOutButton session={session} />
       </div>
       <div className="flex flex-1 justify-center items-center">{children}</div>
-      <div className="sticky bottom-6 bg-background">
+      <div className="sticky bottom-0 bg-background">
         <NavMenuHeader />
       </div>
     </div>

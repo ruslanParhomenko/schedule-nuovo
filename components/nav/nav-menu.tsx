@@ -3,7 +3,6 @@ import { MONTHS } from "@/utils/get-month-days";
 import { useEffect, useState, useTransition } from "react";
 
 import { usePathname, useRouter } from "next/navigation";
-import { RefreshCcw } from "lucide-react";
 import { NAV_BY_PATCH } from "./constants";
 import SelectTabsByPatch from "./select-patch";
 import SelectByMonthYear from "./select-month";
@@ -38,14 +37,19 @@ export default function NavMenuHeader() {
     });
   }, [patch, month, year, mainRoute, router]);
 
-  const resetParams = () => {
-    setPatch("");
-
-    router.push(`/${mainRoute}`);
-  };
   return (
-    <div className="py-2  flex justify-center md:justify-start md:gap-4 gap-1.5">
-      {navItems.length > 0 && (
+    <div className="py-3 flex justify-around md:justify-start md:gap-4 gap-1.5">
+      {NAV_BY_PATCH[mainRoute as keyof typeof NAV_BY_PATCH]?.filterMonths && (
+        <SelectByMonthYear
+          month={month}
+          year={year}
+          setMonth={setMonth}
+          setYear={setYear}
+          isLoading={isPending}
+          classNameMonthYear={navItems?.length > 0 ? "w-15" : "w-24"}
+        />
+      )}
+      {navItems?.length > 0 && (
         <SelectTabsByPatch
           patch={navItems.length > 0 ? patch : ""}
           setPatch={setPatch}
@@ -54,21 +58,21 @@ export default function NavMenuHeader() {
         />
       )}
 
-      <SelectByMonthYear
-        month={month}
-        year={year}
-        setMonth={setMonth}
-        setYear={setYear}
-        isLoading={isPending}
-        classNameMonthYear={navItems.length > 0 ? "w-15" : "w-24"}
-      />
+      {mainRoute === "schedule" && (
+        <button
+          onClick={() => router.push("/swap")}
+          className="hover:text-black text-rd text-xs font-bold hover:bg-transparent shadow rounded-md  w-15 cursor-pointer md:w-24"
+        >
+          SWAP
+        </button>
+      )}
 
-      <button
+      {/* <button
         onClick={resetParams}
         className="hover:text-black text-bl hover:bg-transparent cursor-pointer md:w-24 md:order-3 order-0 px-2"
       >
         <RefreshCcw className="w-4 h-4" />
-      </button>
+      </button> */}
     </div>
   );
 }
