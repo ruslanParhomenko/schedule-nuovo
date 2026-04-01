@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 
-export function DatePicker() {
+export function DatePInput() {
   const [date, setDate] = useState<Date | undefined>();
   const [open, setOpen] = useState(false);
 
@@ -20,7 +20,7 @@ export function DatePicker() {
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="w-64 justify-start text-left font-normal"
+            className="md:w-64 w-full justify-start text-left font-normal"
           >
             {date ? format(date, "dd.MM.yyyy") : "Выберите дату"}
           </Button>

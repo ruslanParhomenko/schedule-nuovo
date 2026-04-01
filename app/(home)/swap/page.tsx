@@ -12,7 +12,9 @@ export default async function Page() {
     role: string;
     mail: string;
   }[];
-  const swapsList = await getSwapsByKey("2026-April-waiters");
+  const month = new Date().getMonth() + 1;
+  const year = new Date().getFullYear();
+  const swapsList = await getSwapsByKey(`${year}-${month}`);
   return (
     <SwapPage employees={employees} session={session} swapsList={swapsList} />
   );

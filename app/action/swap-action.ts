@@ -5,35 +5,34 @@ import admin from "firebase-admin";
 import { unstable_cache, updateTag } from "next/cache";
 
 export type SwapActionType = {
-  role: string;
-  date: string; // ISO string из формы
-  employee1: string;
-  employee2: string;
-  shift: string;
   year: string;
   month: string;
-  dateRegister: string; // ISO string для даты регистрации заявки
+  role: string;
+  employee1: string;
+  typeSwap: string;
+  employee2: string;
+  shift: string;
+  date: string;
 };
 
 const SWAP_ACTION_TAG = "swap_actions";
 
-export async function createSwap(
-  _state: any, // первый аргумент useActionState
-  formData: FormData,
-) {
+export async function createSwap(_state: any, formData: FormData) {
   const id = crypto.randomUUID();
 
-  const employee1 = formData.get("employee1") as string;
-  const employee2 = formData.get("employee2") as string;
-  const dateStr = formData.get("date") as string;
-  const role = formData.get("role") as string;
-  const shift = formData.get("shift") as string;
   const year = formData.get("year") as string;
   const month = formData.get("month") as string;
+  const role = formData.get("role") as string;
   const dateRegister = formData.get("dateRegister") as string;
 
-  if (!employee1 || !employee2) {
-    return { message: "Заполните оба поля", error: true };
+  const employee1 = formData.get("employee1") as string;
+  const typeSwap = formData.get("typeSwap") as string;
+  const employee2 = formData.get("employee2") as string;
+  const shift = formData.get("shift") as string;
+  const dateStr = formData.get("date") as string;
+
+  if (!employee1 || !employee2 || !typeSwap || !shift || !dateStr) {
+    return { message: "заполните все поля", error: true };
   }
 
   const parsedDate = new Date(dateStr);
@@ -41,7 +40,7 @@ export async function createSwap(
     return { message: "Некорректная дата", error: true };
   }
 
-  const uniqueKey = `${year}-${month}-${role}`;
+  const uniqueKey = `${year}-${month}`;
   const docRef = db.collection(SWAP_ACTION_TAG).doc(uniqueKey);
 
   const newItem = {
@@ -51,6 +50,7 @@ export async function createSwap(
     employee1,
     employee2,
     shift,
+    typeSwap,
     dateRegister: admin.firestore.Timestamp.fromDate(new Date(dateRegister)),
   };
 
