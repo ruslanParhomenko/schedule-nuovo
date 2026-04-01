@@ -2,6 +2,17 @@
 
 import { createSwap } from "@/app/action/swap-action";
 import { DatePicker } from "@/components/calendar/date-input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { format } from "date-fns";
 import { Session } from "next-auth";
 import { useActionState, useState } from "react";
 
@@ -34,16 +45,53 @@ export default function SwapPage({
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center">
       {swapsList.length > 0 && (
-        <div className="mb-6 w-full max-w-md">
-          <ul className="space-y-2">
-            {swapsList.map((swap) => (
-              <li key={`swap-${swap.id}`} className="border p-2 rounded-md">
-                <p className="text-sm">
-                  {`${swap.dateRegister.split("T")[0]} : ${swap.employee1} => ${swap.employee2}- ${swap.date?.split("T")[0]} \ ${swap.shift}`}
-                </p>
-              </li>
-            ))}
-          </ul>
+        <div className="mb-6 w-full max-w-4xl h-[33vh] overflow-y-auto border rounded-md p-2">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Create</TableHead>
+                <TableHead>Сотрудник 1</TableHead>
+                <TableHead>Вид замены</TableHead>
+                <TableHead>Сотрудник 2</TableHead>
+                <TableHead>Дата</TableHead>
+                <TableHead>Смена</TableHead>
+                <TableHead>Акции</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {swapsList.map((swap) => (
+                <TableRow key={`swap-${swap.id}`}>
+                  <TableCell>
+                    {swap.dateRegister
+                      ? format(new Date(swap.dateRegister), "dd.MM HH:mm")
+                      : "-"}
+                  </TableCell>
+                  <TableCell>{swap.employee1}</TableCell>
+                  <TableCell>{swap.role}</TableCell>
+                  <TableCell>{swap.employee2}</TableCell>
+                  <TableCell>
+                    {swap.date ? format(new Date(swap.date), "dd.MM") : "-"}
+                  </TableCell>
+                  <TableCell>{swap.shift}</TableCell>
+                  <TableCell className="flex gap-2 items-center">
+                    <Checkbox
+                      checked={swap.confirmed ?? false}
+                      onCheckedChange={(checked) =>
+                        console.log("Confirmed:", swap.id, checked)
+                      }
+                    />
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => console.log("Delete swap:", swap.id)}
+                    >
+                      Удалить
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       )}
       <form
@@ -56,7 +104,7 @@ export default function SwapPage({
             console.log(key, value);
           }
         }}
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-4 flex-1"
       >
         <input type="text" name="role" value={userRole} readOnly />
         <input
