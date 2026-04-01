@@ -1,4 +1,5 @@
 import { getEmployees } from "@/app/action/get-employee";
+import { getSwapsByKey } from "@/app/action/swap-action";
 import SwapPage from "@/features/swap/swap-page";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
@@ -11,5 +12,8 @@ export default async function Page() {
     role: string;
     mail: string;
   }[];
-  return <SwapPage employees={employees} session={session} />;
+  const swapsList = await getSwapsByKey("2026-April-waiters");
+  return (
+    <SwapPage employees={employees} session={session} swapsList={swapsList} />
+  );
 }
