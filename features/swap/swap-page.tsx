@@ -40,7 +40,7 @@ export default function SwapPage({
     .map((emp) => ({ value: emp.name, label: emp.name }));
 
   return (
-    <div className="flex flex-col w-full items-center p-1 h-screen">
+    <div className="flex flex-col w-full items-center p-1 h-screen justify-center">
       {swapsList.length > 0 && (
         <div className="w-full max-w-4xl h-[33vh] overflow-y-auto">
           <SwapListTable swapsList={swapsList} />
@@ -56,7 +56,7 @@ export default function SwapPage({
             console.log(key, value);
           }
         }}
-        className="flex flex-col gap-4 w-full px-2"
+        className="flex flex-col gap-4 w-full px-2 md:w-1/2 md:items-center"
       >
         <SelectInput
           options={SHIFT_ACTIONS}
@@ -82,7 +82,7 @@ export default function SwapPage({
         <button
           type="submit"
           disabled={pending}
-          className={`py-2 px-4 rounded-md text-white transition-colors ${
+          className={`py-2 px-4 rounded-md text-white transition-colors md:w-64 ${
             pending
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-500 hover:bg-blue-600"

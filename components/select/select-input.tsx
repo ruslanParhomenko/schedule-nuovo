@@ -30,7 +30,7 @@ export default function SelectInput({
       <Select value={value} onValueChange={setValue}>
         <SelectTrigger
           className={cn(
-            "[&>svg]:hidden justify-start w-full md:w-24 text-blue-500",
+            "[&>svg]:hidden justify-start w-full md:w-64 text-blue-500 h-10!",
             className,
           )}
         >
