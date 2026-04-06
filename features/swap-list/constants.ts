@@ -1,5 +1,7 @@
+import { ArrowRight, ArrowLeft, ArrowLeftRight } from "lucide-react";
+
 export const SHIFT_VALUES = {
-  take: "взял смену у",
-  give: "отдал смену",
-  swap: "обменял смену с",
+  take: ArrowRight, // =>
+  give: ArrowLeft, // <=
+  swap: ArrowLeftRight, // <=>
 };

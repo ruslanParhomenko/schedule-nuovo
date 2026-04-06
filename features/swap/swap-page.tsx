@@ -40,9 +40,9 @@ export default function SwapPage({
     .map((emp) => ({ value: emp.name, label: emp.name }));
 
   return (
-    <div className="flex flex-col w-full items-center p-1 h-screen justify-center">
+    <div className="flex flex-col w-full items-center p-1 h-screen ">
       {swapsList.length > 0 && (
-        <div className="w-full max-w-4xl h-[33vh] overflow-y-auto">
+        <div className="w-full max-w-4xl h-[33vh] overflow-y-auto justify-start">
           <SwapListTable swapsList={swapsList} />
         </div>
       )}
