@@ -2,17 +2,15 @@
 
 import { signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
-import { Session } from "next-auth";
 
-export default function LogOutButton({ session }: { session: Session | null }) {
+export default function LogOutButton() {
   return (
-    <div className="flex justify-center items-center">
-      <span>привет {session?.user?.name}</span>
+    <div className="flex items-center justify-center">
       <button
         onClick={() => signOut({ callbackUrl: "/" })}
-        className="h-7 w-7 px-1"
+        className="flex h-7 cursor-pointer items-center justify-center"
       >
-        <LogOut className="w-4 h-4  font-bold" />
+        <LogOut className="h-4 w-4 font-bold text-red-600" />
       </button>
     </div>
   );

@@ -2,21 +2,33 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
 import { SHIFT_VALUES } from "./constants";
+import { SwapActionType, updateSwapStatus } from "@/app/action/swap-action";
+import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
-export default function SwapListTable({ swapsList }: { swapsList: any[] }) {
-  console.log("Rendering SwapListTable with swapsList:", swapsList);
+export default function SwapListTable({
+  swapsList,
+}: {
+  swapsList: SwapActionType[];
+}) {
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.email === "parhomenkogm@gmail.com";
+  const reversedList = [...swapsList].reverse();
   return (
     <Table>
       <TableBody>
-        {swapsList.map((swap) => {
+        {reversedList.map((swap) => {
           const IconComponent =
             SHIFT_VALUES[swap.typeSwap as keyof typeof SHIFT_VALUES];
 
-          console.log("swap.type:", swap.type);
+          const isChecked = swap.isAccepted;
           return (
             <TableRow
               key={`swap-${swap.id}`}
-              className="[&>td]:p-1 [&>td]:text-xs"
+              className={cn(
+                "[&>td]:p-1 [&>td]:text-xs",
+                isChecked && "bg-accent text-green-600!",
+              )}
             >
               <TableCell className="text-blue-500">
                 {swap.dateRegister
@@ -46,12 +58,18 @@ export default function SwapListTable({ swapsList }: { swapsList: any[] }) {
               <TableCell>{swap.shift}</TableCell>
               <TableCell className="flex gap-2 items-center">
                 <Checkbox
-                  checked={swap.confirmed ?? false}
-                  onCheckedChange={(checked) =>
-                    console.log("Confirmed:", swap.id, checked)
-                  }
+                  checked={swap.isAccepted ?? false}
+                  onCheckedChange={async (checked) => {
+                    const value = checked === true;
+
+                    isAdmin &&
+                      (await updateSwapStatus(
+                        `${swap.year}-${swap.month}`,
+                        swap.id,
+                        value,
+                      ));
+                  }}
                 />
-                {/* <Trash2Icon className="h-4 w-4 text-red-500" /> */}
               </TableCell>
             </TableRow>
           );

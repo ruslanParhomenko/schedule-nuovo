@@ -1,28 +1,9 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import NavMenu from "@/components/nav/nav-menu";
 
-import { redirect } from "next/navigation";
-import NavMenuHeader from "@/components/nav/nav-menu";
-import LogOutButton from "@/components/buttons/logout-button";
-
-const NavPage = async ({
+export default function HomeLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) => {
-  const session = await getServerSession(authOptions);
-  if (!session) redirect("/");
-  return (
-    <div className="w-full h-screen flex flex-col">
-      <div className="flex justify-center items-center gap-4 py-2 text-xs text-gray-600">
-        <LogOutButton session={session} />
-      </div>
-      <div className="flex flex-1 justify-center items-center">{children}</div>
-      <div className="sticky bottom-0 bg-background">
-        <NavMenuHeader />
-      </div>
-    </div>
-  );
-};
-
-export default NavPage;
+}) {
+  return <NavMenu>{children}</NavMenu>;
+}

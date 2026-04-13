@@ -47,7 +47,10 @@ export type ScheduleData = {
 //   }
 // );
 
-export async function getScheduleByMonthYear(month: string, year: string) {
+export async function getScheduleByMonthYear(
+  month: string,
+  year: string,
+): Promise<ScheduleData[]> {
   const res = await fetch(
     `${process.env.NEXTAUTH_URL}/api/schedule?month=${month}&year=${year}`,
     {

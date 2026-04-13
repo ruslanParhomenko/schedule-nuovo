@@ -5,6 +5,7 @@ import admin from "firebase-admin";
 import { unstable_cache, updateTag } from "next/cache";
 
 export type SwapActionType = {
+  id: string;
   year: string;
   month: string;
   role: string;
@@ -13,6 +14,8 @@ export type SwapActionType = {
   employee2: string;
   shift: string;
   date: string;
+  isAccepted: boolean;
+  dateRegister: string;
 };
 
 const SWAP_ACTION_TAG = "swap_actions";
@@ -52,6 +55,9 @@ export async function createSwap(_state: any, formData: FormData) {
     shift,
     typeSwap,
     dateRegister: admin.firestore.Timestamp.fromDate(new Date(dateRegister)),
+    isAccepted: false,
+    year,
+    month,
   };
 
   await db.runTransaction(async (tx) => {
@@ -93,10 +99,10 @@ export async function deleteSwap(uniqueKey: string, id: string) {
 
 //update
 
-export async function updateSwap(
+export async function updateSwapStatus(
   uniqueKey: string,
   id: string,
-  updatedData: Partial<SwapActionType>,
+  isAccepted: boolean,
 ) {
   const docRef = db.collection(SWAP_ACTION_TAG).doc(uniqueKey);
 
@@ -108,15 +114,7 @@ export async function updateSwap(
     const list = raw?.data ?? [];
 
     const updated = list.map((item: any) =>
-      item.id === id
-        ? {
-            ...item,
-            ...updatedData,
-            date: updatedData.date
-              ? admin.firestore.Timestamp.fromDate(new Date(updatedData.date))
-              : item.date,
-          }
-        : item,
+      item.id === id ? { ...item, isAccepted } : item,
     );
 
     tx.update(docRef, { data: updated });

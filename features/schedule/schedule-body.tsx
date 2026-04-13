@@ -7,7 +7,7 @@ export default function ScheduleBody({
   schedule,
   selectedColumn,
 }: {
-  schedule: ScheduleData;
+  schedule: ScheduleData | null;
   selectedColumn: number;
 }) {
   return (

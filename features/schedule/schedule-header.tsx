@@ -1,5 +1,5 @@
 import { MonthDayType } from "@/utils/get-month-days";
-import { TableCell, TableHeader, TableRow } from "@/components/ui/table";
+import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
 export default function ScheduleHeader({
@@ -16,14 +16,14 @@ export default function ScheduleHeader({
   const todayDay = new Date().getDate();
 
   return (
-    <TableHeader>
+    <TableBody>
       <TableRow
         className={cn(
           "border-bl/30 border-0!",
-          isFooter ? "border-t!" : "border-b!"
+          isFooter ? "border-t!" : "border-b!",
         )}
       >
-        <TableCell className="w-28 p-0 front-bold text-center sticky left-0 bg-card text-bl">
+        <TableCell className="w-28 p-0 front-bold text-center sticky left-0 bg-background text-bl">
           {isFooter ? "" : month?.toUpperCase() || ""}
         </TableCell>
         {monthDays.map((day, index) => {
@@ -31,8 +31,8 @@ export default function ScheduleHeader({
             <TableCell
               key={day.day}
               className={cn(
-                "w-10 cursor-pointer p-0  bg-card text-bl",
-                day.day === todayDay && "text-rd! front-bold"
+                "w-10 cursor-pointer p-0   text-bl",
+                day.day === todayDay && "text-rd! front-bold",
               )}
               onClick={() => setSelectedColumn && setSelectedColumn(index)}
             >
@@ -44,6 +44,6 @@ export default function ScheduleHeader({
           );
         })}
       </TableRow>
-    </TableHeader>
+    </TableBody>
   );
 }

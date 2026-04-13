@@ -7,16 +7,18 @@ import ScheduleHeader from "./schedule-header";
 import { ScheduleData } from "@/app/action/get-schedule";
 import ScheduleBody from "./schedule-body";
 import { ViewTransition } from "react";
+import { useHashParam } from "@/hooks/use-hash";
 
 export default function Schedule({
-  schedule,
+  schedules,
   monthDays,
   month,
 }: {
-  schedule: ScheduleData;
+  schedules: ScheduleData[];
   monthDays: ReturnType<typeof getMonthDays>;
   month: string;
 }) {
+  const [value] = useHashParam("tab");
   const [selectedColumn, setSelectedColumn] = useState<number | null>(null);
 
   const todayDay = new Date().getDate();
@@ -26,6 +28,11 @@ export default function Schedule({
       setSelectedColumn(todayIndex);
     }
   }, [todayIndex]);
+
+  if (!value) return null;
+
+  const schedule =
+    schedules.find((schedule) => schedule.role === value) || null;
 
   return (
     <ViewTransition>
