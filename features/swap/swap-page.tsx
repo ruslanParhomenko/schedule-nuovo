@@ -40,9 +40,9 @@ export default function SwapPage({
 
   return (
     <ViewTransition>
-      <div className="flex justify-start gap-4 flex-col h-full py-4">
+      <div className="flex justify-start gap-4 flex-col h-full py-1">
         {swapsList.length > 0 && (
-          <div className="w-full max-w-4xl h-[50vh] overflow-y-auto justify-start border border-bl p-3 rounded-md">
+          <div className="w-full max-w-4xl h-[40vh] overflow-y-auto justify-start border border-bl p-3 rounded-md">
             <SwapListTable swapsList={swapsList} />
           </div>
         )}
