@@ -14,6 +14,7 @@ export default function SwapListTable({
   const { data: session } = useSession();
   const isAdmin = session?.user?.email === "parhomenkogm@gmail.com";
   const reversedList = [...swapsList].reverse();
+
   return (
     <Table>
       <TableBody>
@@ -32,7 +33,7 @@ export default function SwapListTable({
             >
               <TableCell className="text-blue-500">
                 {swap.dateRegister
-                  ? format(new Date(swap.dateRegister), "dd.MM HH:mm")
+                  ? format(new Date(swap.dateRegister), "dd- HH:mm")
                   : "-"}
               </TableCell>
               <TableCell>
@@ -52,10 +53,12 @@ export default function SwapListTable({
                   {swap.employee2.split(" ")[1]?.[0] || ""}
                 </span>
               </TableCell>
-              <TableCell>
+              <TableCell className="text-yellow-700">
                 {swap.date ? format(new Date(swap.date), "dd.MM") : "-"}
               </TableCell>
-              <TableCell>{swap.shift}</TableCell>
+              <TableCell className="text-bl font-bold w-8 text-center">
+                {swap.shift}
+              </TableCell>
               <TableCell className="flex gap-2 items-center">
                 <Checkbox
                   checked={swap.isAccepted ?? false}

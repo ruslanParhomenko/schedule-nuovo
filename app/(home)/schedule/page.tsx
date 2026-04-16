@@ -1,8 +1,5 @@
 import { getEmployees } from "@/app/action/get-employee";
-import {
-  getScheduleByMonthYear,
-  ScheduleData,
-} from "@/app/action/get-schedule";
+import { getScheduleByMonthYear } from "@/app/action/get-schedule";
 import { getUsers } from "@/app/action/get-user";
 import NotAuth from "@/components/page/not-auth";
 import NotSchedule from "@/components/page/not-schedule";
@@ -12,10 +9,8 @@ import { getMonthDays } from "@/utils/get-month-days";
 import { getServerSession } from "next-auth";
 
 export default async function Page({
-  params,
   searchParams,
 }: {
-  params: Promise<{ patch: string }>;
   searchParams: Promise<{ [key: string]: string }>;
 }) {
   const session = await getServerSession(authOptions);
@@ -42,7 +37,6 @@ export default async function Page({
   if (!isAuth) {
     return <NotAuth name={session?.user?.name!} />;
   }
-  const { patch } = await params;
   const { month } = await searchParams;
 
   if (!month) return null;
