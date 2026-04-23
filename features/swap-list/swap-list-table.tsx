@@ -8,12 +8,19 @@ import { useSession } from "next-auth/react";
 
 export default function SwapListTable({
   swapsList,
+  employees,
 }: {
   swapsList: SwapActionType[];
+  employees: { id: string; name: string; role: string; mail: string }[];
 }) {
+  console.log(employees);
   const { data: session } = useSession();
-  const isAdmin = session?.user?.email === "parhomenkogm@gmail.com";
+  const emailUser = session?.user?.email;
+
+  const isAdmin = emailUser === "parhomenkogm@gmail.com";
   const reversedList = [...swapsList].reverse();
+
+  console.log(reversedList);
 
   return (
     <Table>
@@ -23,6 +30,7 @@ export default function SwapListTable({
             SHIFT_VALUES[swap.typeSwap as keyof typeof SHIFT_VALUES];
 
           const isChecked = swap.isAccepted;
+
           return (
             <TableRow
               key={`swap-${swap.id}`}

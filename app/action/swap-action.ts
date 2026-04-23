@@ -56,6 +56,7 @@ export async function createSwap(_state: any, formData: FormData) {
     typeSwap,
     dateRegister: admin.firestore.Timestamp.fromDate(new Date(dateRegister)),
     isAccepted: false,
+    isRefused: false,
     year,
     month,
   };
@@ -123,6 +124,29 @@ export async function updateSwapStatus(
   updateTag(SWAP_ACTION_TAG);
 }
 
+export async function updateRefuseStatus(
+  uniqueKey: string,
+  id: string,
+  isRefused: boolean,
+) {
+  const docRef = db.collection(SWAP_ACTION_TAG).doc(uniqueKey);
+
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(docRef);
+    if (!snap.exists) return;
+
+    const raw = snap.data();
+    const list = raw?.data ?? [];
+
+    const updated = list.map((item: any) =>
+      item.id === id ? { ...item, isRefused } : item,
+    );
+
+    tx.update(docRef, { data: updated });
+  });
+
+  updateTag(SWAP_ACTION_TAG);
+}
 // get
 
 export async function _getSwapsByKey(uniqueKey: string) {

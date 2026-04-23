@@ -41,10 +41,10 @@ export default function SwapPage({
   return (
     <ViewTransition>
       <div className="grid md:grid-cols-2 grid-cols-1 gap-4 items-start h-[90vh] w-full md:px-4 px-2">
-        <div className="md:h-full h-[50vh] overflow-hidden flex md:px-4">
-          <SwapListTable swapsList={swapsList} />
+        <div className="md:h-full h-[40vh] overflow-hidden flex md:px-4">
+          <SwapListTable swapsList={swapsList} employees={employees} />
         </div>
-        <div className="flex-1 sticky top-0 md:px-4">
+        <div className="flex-1 sticky top-10 md:px-4">
           <form action={formAction} className="space-y-6">
             <SelectInput
               options={SHIFT_ACTIONS}

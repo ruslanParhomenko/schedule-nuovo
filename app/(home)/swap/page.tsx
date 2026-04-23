@@ -15,6 +15,7 @@ export default async function Page() {
   const month = new Date().getMonth() + 1;
   const year = new Date().getFullYear();
   const swapsList = await getSwapsByKey(`${year}-${month}`);
+
   return (
     <SwapPage employees={employees} session={session} swapsList={swapsList} />
   );
