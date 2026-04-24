@@ -1,6 +1,7 @@
 import { getEmployees } from "@/app/action/get-employee";
 import { getScheduleByMonthYear } from "@/app/action/get-schedule";
 import { getUsers } from "@/app/action/get-user";
+import { getSwapsByKey } from "@/app/action/swap-action";
 import NotAuth from "@/components/page/not-auth";
 import NotSchedule from "@/components/page/not-schedule";
 import Schedule from "@/features/schedule/schedule-page";
@@ -42,11 +43,20 @@ export default async function Page({
   if (!month) return null;
 
   const year = new Date().getFullYear().toString();
+  const monthNumber = new Date().getMonth() + 1;
   const schedule = await getScheduleByMonthYear(month, year);
   const monthDays = getMonthDays({ month: month, year: year });
+  const swapsList = await getSwapsByKey(`${year}-${monthNumber}`);
 
   return schedule ? (
-    <Schedule schedules={schedule} monthDays={monthDays} month={month} />
+    <Schedule
+      schedules={schedule}
+      monthDays={monthDays}
+      month={month}
+      employees={employees}
+      swapsList={swapsList}
+      session={session}
+    />
   ) : (
     <NotSchedule />
   );

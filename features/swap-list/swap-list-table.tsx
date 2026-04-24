@@ -2,9 +2,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
 import { SHIFT_VALUES } from "./constants";
-import { SwapActionType, updateSwapStatus } from "@/app/action/swap-action";
+import {
+  SwapActionType,
+  updateRefuseStatus,
+  updateSwapStatus,
+} from "@/app/action/swap-action";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
+import { Trash2Icon } from "lucide-react";
+import { toast } from "sonner";
 
 export default function SwapListTable({
   swapsList,
@@ -13,14 +19,13 @@ export default function SwapListTable({
   swapsList: SwapActionType[];
   employees: { id: string; name: string; role: string; mail: string }[];
 }) {
-  console.log(employees);
   const { data: session } = useSession();
   const emailUser = session?.user?.email;
 
+  const idUser = employees.find((e) => e.mail === emailUser)?.id;
+
   const isAdmin = emailUser === "parhomenkogm@gmail.com";
   const reversedList = [...swapsList].reverse();
-
-  console.log(reversedList);
 
   return (
     <Table>
@@ -30,15 +35,40 @@ export default function SwapListTable({
             SHIFT_VALUES[swap.typeSwap as keyof typeof SHIFT_VALUES];
 
           const isChecked = swap.isAccepted;
+          const isRefused = swap.isRefused;
+
+          const isOwner =
+            idUser !== undefined &&
+            swap.idEmployee !== undefined &&
+            swap.idEmployee === idUser;
 
           return (
             <TableRow
               key={`swap-${swap.id}`}
               className={cn(
-                "[&>td]:p-1 [&>td]:text-xs",
-                isChecked && "bg-accent text-green-600!",
+                "[&>td]:p-1 [&>td]:py-3 [&>td]:text-xs",
+                isChecked && "[&>td]:text-green-600!",
+                isRefused && "line-through opacity-60",
               )}
             >
+              <TableCell className="text-red-600 w-8">
+                <Trash2Icon
+                  size={14}
+                  strokeWidth={1.5}
+                  onClick={async () => {
+                    if (isOwner) {
+                      await updateRefuseStatus(
+                        `${swap.year}-${swap.month}`,
+                        swap.id,
+                        true,
+                      );
+                      toast.success("Заявка отклонена");
+                    } else {
+                      toast.error("Вы не можете отклонить заявку");
+                    }
+                  }}
+                />
+              </TableCell>
               <TableCell className="text-blue-500">
                 {swap.dateRegister
                   ? format(new Date(swap.dateRegister), "dd- HH:mm")
@@ -67,7 +97,7 @@ export default function SwapListTable({
               <TableCell className="text-bl font-bold w-8 text-center">
                 {swap.shift}
               </TableCell>
-              <TableCell className="flex gap-2 items-center">
+              <TableCell className="w-8 text-center">
                 <Checkbox
                   checked={swap.isAccepted ?? false}
                   onCheckedChange={async (checked) => {

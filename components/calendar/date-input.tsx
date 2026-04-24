@@ -20,7 +20,7 @@ export function DatePInput() {
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="w-full justify-start text-left font-normal h-10"
+            className="w-full justify-start text-left font-normal h-12"
           >
             {date ? format(date, "dd.MM.yyyy") : "Выберите дату"}
           </Button>

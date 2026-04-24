@@ -15,7 +15,9 @@ export type SwapActionType = {
   shift: string;
   date: string;
   isAccepted: boolean;
+  isRefused: boolean;
   dateRegister: string;
+  idEmployee: string;
 };
 
 const SWAP_ACTION_TAG = "swap_actions";
@@ -33,6 +35,7 @@ export async function createSwap(_state: any, formData: FormData) {
   const employee2 = formData.get("employee2") as string;
   const shift = formData.get("shift") as string;
   const dateStr = formData.get("date") as string;
+  const idEmployee = formData.get("idEmployee") as string;
 
   if (!employee1 || !employee2 || !typeSwap || !shift || !dateStr) {
     return { message: "заполните все поля", error: true };
@@ -51,6 +54,7 @@ export async function createSwap(_state: any, formData: FormData) {
     date: admin.firestore.Timestamp.fromDate(parsedDate),
     role,
     employee1,
+    idEmployee,
     employee2,
     shift,
     typeSwap,

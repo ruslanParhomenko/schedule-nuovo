@@ -9,6 +9,7 @@ import TabsOptions from "../tabs/tabs-options";
 import SelectOptions from "../select/select-options";
 import ThemesButton from "../buttons/themes-button";
 import LogOutButton from "../buttons/logout-button";
+import { start } from "repl";
 
 export default function NavMenu({ children }: { children: React.ReactNode }) {
   const patchName = usePathname().split("/")[1];
@@ -26,9 +27,11 @@ export default function NavMenu({ children }: { children: React.ReactNode }) {
   const [isPending, startTransition] = useTransition();
 
   const handleTabChange = (value: string) => {
-    setTab(value);
-    localStorage.setItem(STORAGE_KEY, value);
-    setHash(value);
+    startTransition(() => {
+      setTab(value);
+      localStorage.setItem(STORAGE_KEY, value);
+      setHash(value);
+    });
   };
 
   useEffect(() => {
@@ -88,7 +91,7 @@ export default function NavMenu({ children }: { children: React.ReactNode }) {
         {children}
       </div>
 
-      <div className="bg-background sticky bottom-3 z-20 flex items-center justify-between gap-2 px-4 pb-1 md:my-1 md:justify-start md:gap-4">
+      <div className="bg-background sticky bottom-2 z-20 flex items-center justify-center px-4 md:justify-start">
         {navItems.length > 0 && (
           <TabsOptions
             value={tab}
@@ -96,15 +99,6 @@ export default function NavMenu({ children }: { children: React.ReactNode }) {
             isPending={isPending}
             options={navItems}
           />
-        )}
-
-        {patchName === "schedule" && (
-          <button
-            onClick={() => router.push("/swap")}
-            className="hover:text-black text-rd text-xs font-bold hover:bg-transparent shadow rounded-md h-8  w-18 cursor-pointer md:w-24"
-          >
-            SWAP
-          </button>
         )}
       </div>
     </div>
