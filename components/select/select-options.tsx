@@ -16,7 +16,7 @@ export default function SelectOptions({
   className,
   placeHolder,
 }: {
-  options: Options;
+  options: { value: string; label: string }[];
   value: string;
   onChange: (value: string) => void;
   isLoading?: boolean;

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 
-export type Options = { value: string; label: string }[];
+export type Options = readonly string[];
 export default function TabsOptions({
   value,
   setValue,
@@ -18,8 +18,8 @@ export default function TabsOptions({
       <TabsList className="flex h-9 md:gap-2">
         {options.map((item, idx) => (
           <TabsTrigger
-            key={`${item.value}-${idx}`}
-            value={item.value}
+            key={`${item}-${idx}`}
+            value={item}
             disabled={isPending}
             className={cn(
               "hover:text-bl w-18 cursor-pointer md:w-24",
@@ -27,7 +27,7 @@ export default function TabsOptions({
             )}
           >
             <span className="md:text-md text-bl block w-full truncate text-xs">
-              {item.label}
+              {item}
             </span>
           </TabsTrigger>
         ))}

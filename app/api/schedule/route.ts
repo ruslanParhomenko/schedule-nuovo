@@ -8,13 +8,18 @@ export async function GET(req: Request) {
 
   if (!month || !year) return new Response("Missing params", { status: 400 });
 
-  const snapshot = await db
-    .collection("schedule")
-    .where("month", "==", month)
-    .where("year", "==", year)
-    .get();
+  const docRef = await db
+    .collection("schedule-new")
+    .doc(year)
+    .collection("months")
+    .doc(month)
+    .collection("role");
 
-  const data = snapshot.docs.map((doc) => ({
+  const snap = await docRef.get();
+
+  if (snap.empty) return [];
+
+  const data = snap.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   }));

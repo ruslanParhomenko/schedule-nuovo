@@ -97,7 +97,7 @@ export default function SwapListTable({
               <TableCell className="text-bl font-bold w-8 text-center">
                 {swap.shift}
               </TableCell>
-              <TableCell className="w-8 text-center">
+              <TableCell className="w-10 text-center pr-4">
                 <Checkbox
                   checked={swap.isAccepted ?? false}
                   onCheckedChange={async (checked) => {

@@ -6,11 +6,11 @@ import { getMonthDays } from "@/utils/get-month-days";
 import ScheduleHeader from "./schedule-header";
 import { ScheduleData } from "@/app/action/get-schedule";
 import ScheduleBody from "./schedule-body";
-import { ViewTransition } from "react";
-import { useHashParam } from "@/hooks/use-hash";
+
 import SwapPage from "../swap/swap-page";
 import { SwapActionType } from "@/app/action/swap-action";
 import { Session } from "next-auth";
+import { useSearchParams } from "next/navigation";
 
 export default function Schedule({
   schedules,
@@ -27,7 +27,7 @@ export default function Schedule({
   swapsList: SwapActionType[];
   session: Session | null;
 }) {
-  const [value] = useHashParam("tab");
+  const role = useSearchParams().get("tab");
   const [selectedColumn, setSelectedColumn] = useState<number | null>(null);
 
   const todayDay = new Date().getDate();
@@ -38,14 +38,13 @@ export default function Schedule({
     }
   }, [todayIndex]);
 
-  if (!value) return null;
+  if (!role) return null;
 
-  const schedule =
-    schedules.find((schedule) => schedule.role === value) || null;
+  const schedule = schedules.find((schedule) => schedule.id === role) || null;
 
   return (
-    <ViewTransition>
-      {value === "swap" ? (
+    <>
+      {role === "swap" ? (
         <SwapPage
           employees={employees}
           session={session}
@@ -71,6 +70,6 @@ export default function Schedule({
           />
         </Table>
       )}
-    </ViewTransition>
+    </>
   );
 }

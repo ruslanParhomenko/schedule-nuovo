@@ -44,13 +44,13 @@ export default async function Page({
 
   const year = new Date().getFullYear().toString();
   const monthNumber = new Date().getMonth() + 1;
-  const schedule = await getScheduleByMonthYear(month, year);
+  const schedules = await getScheduleByMonthYear(month, year);
   const monthDays = getMonthDays({ month: month, year: year });
   const swapsList = await getSwapsByKey(`${year}-${monthNumber}`);
 
-  return schedule ? (
+  return schedules ? (
     <Schedule
-      schedules={schedule}
+      schedules={schedules}
       monthDays={monthDays}
       month={month}
       employees={employees}

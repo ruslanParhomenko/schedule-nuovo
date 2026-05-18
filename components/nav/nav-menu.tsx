@@ -1,58 +1,77 @@
 "use client";
 import { MONTHS } from "@/utils/get-month-days";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useEffectEvent, useState, useTransition } from "react";
 
-import { usePathname, useRouter } from "next/navigation";
-import { NAV_BY_PATCH } from "./constants";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
 import { useHashParam } from "@/hooks/use-hash";
 import TabsOptions from "../tabs/tabs-options";
 import SelectOptions from "../select/select-options";
 import ThemesButton from "../buttons/themes-button";
 import LogOutButton from "../buttons/logout-button";
-import { start } from "repl";
 
 export default function NavMenu({ children }: { children: React.ReactNode }) {
-  const patchName = usePathname().split("/")[1];
-  const navItems =
-    NAV_BY_PATCH[patchName as keyof typeof NAV_BY_PATCH]?.navItems;
+  const pathname = usePathname();
+  const mainRoute = pathname.split("/")[1] || "";
+  const searchParams = useSearchParams();
+  const navItems = ["bar", "cucina", "dish", "swap"] as const;
 
-  const STORAGE_KEY = `nav-tab-${patchName}`;
+  const STORAGE_KEY = `nav-tab-${mainRoute}`;
 
   const router = useRouter();
 
-  const [_value, setHash] = useHashParam("tab");
-  const [tab, setTab] = useState<string>(navItems?.[0]?.label || "");
-
-  const [month, setMonth] = useState(MONTHS[new Date().getMonth()]);
+  const activeTab = searchParams.get("tab") || navItems[0] || "";
+  const urlMonth = searchParams.get("month");
+  const [month, setMonth] = useState(
+    () => urlMonth || MONTHS[new Date().getMonth()],
+  );
   const [isPending, startTransition] = useTransition();
 
-  const handleTabChange = (value: string) => {
-    startTransition(() => {
-      setTab(value);
-      localStorage.setItem(STORAGE_KEY, value);
-      setHash(value);
-    });
-  };
-
   useEffect(() => {
-    const url = `/${patchName}?month=${month}`;
+    setMonth(urlMonth || MONTHS[new Date().getMonth()]);
+  }, [pathname]);
 
-    startTransition(() => {
-      router.push(url);
-    });
-  }, [month, patchName, router]);
+  const onSyncParams = useEffectEvent((items: readonly string[], m: string) => {
+    const params = new URLSearchParams(searchParams.toString());
 
-  useEffect(() => {
-    if (patchName !== "schedule") return;
+    const hasItems = items.length > 0;
+    let resolvedTab: string | undefined;
 
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      setTab(stored);
-      setHash(stored);
-    } else {
-      setHash(navItems[0].value);
+    if (hasItems) {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      resolvedTab = saved && items.includes(saved) ? saved : items[0];
     }
-  }, [STORAGE_KEY, patchName, setHash]);
+
+    const currentTab = params.get("tab");
+    const currentMonth = params.get("month");
+
+    const tabSynced = !hasItems || currentTab === resolvedTab;
+    const dateSynced = currentMonth === m;
+
+    if (tabSynced && dateSynced) return;
+
+    if (hasItems && resolvedTab) {
+      params.set("tab", resolvedTab);
+    }
+
+    startTransition(() => {
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    });
+  });
+
+  useEffect(() => {
+    onSyncParams(navItems, month);
+  }, [STORAGE_KEY, navItems, month, pathname]);
+
+  const handleTabChange = (value: string) => {
+    localStorage.setItem(STORAGE_KEY, value);
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", value);
+
+    // router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
+  };
 
   const currentMonthIndex = new Date().getMonth();
 
@@ -66,19 +85,16 @@ export default function NavMenu({ children }: { children: React.ReactNode }) {
     <div className="flex h-screen flex-col justify-between">
       <div className="bg-background sticky top-2 z-20 my-2 flex justify-between px-4 md:gap-4">
         <div className="order-1 flex gap-4 md:order-0">
-          {NAV_BY_PATCH[patchName as keyof typeof NAV_BY_PATCH]
-            ?.filterMonths && (
-            <SelectOptions
-              options={filteredMonths.map((item) => ({
-                value: item,
-                label: item.slice(0, 3).toUpperCase(),
-              }))}
-              value={month}
-              onChange={setMonth}
-              isLoading={isPending}
-              className="w-22 text-xs border h-8! text-bl font-bold"
-            />
-          )}
+          <SelectOptions
+            options={filteredMonths.map((item) => ({
+              value: item,
+              label: item.slice(0, 3).toUpperCase(),
+            }))}
+            value={month}
+            onChange={setMonth}
+            isLoading={isPending}
+            className="w-22 text-xs border h-8! text-bl font-bold"
+          />
         </div>
 
         <div className="flex gap-8">
@@ -94,7 +110,7 @@ export default function NavMenu({ children }: { children: React.ReactNode }) {
       <div className="bg-background sticky bottom-2 z-20 flex items-center justify-center px-4 md:justify-start">
         {navItems.length > 0 && (
           <TabsOptions
-            value={tab}
+            value={activeTab}
             setValue={handleTabChange}
             isPending={isPending}
             options={navItems}
