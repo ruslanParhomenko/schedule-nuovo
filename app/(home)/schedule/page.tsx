@@ -3,8 +3,8 @@ import { getScheduleByMonthYear } from "@/app/action/get-schedule";
 import { getUsers } from "@/app/action/get-user";
 import { getSwapsByKey } from "@/app/action/swap-action";
 import NotAuth from "@/components/page/not-auth";
-import NotSchedule from "@/components/page/not-schedule";
-import Schedule from "@/features/schedule/schedule-page";
+
+import SchedulePage from "@/features/schedule/schedule-page";
 import { authOptions } from "@/lib/auth";
 import { getMonthDays } from "@/utils/get-month-days";
 import { getServerSession } from "next-auth";
@@ -48,8 +48,8 @@ export default async function Page({
   const monthDays = getMonthDays({ month: month, year: year });
   const swapsList = await getSwapsByKey(`${year}-${monthNumber}`);
 
-  return schedules ? (
-    <Schedule
+  return (
+    <SchedulePage
       schedules={schedules}
       monthDays={monthDays}
       month={month}
@@ -57,7 +57,5 @@ export default async function Page({
       swapsList={swapsList}
       session={session}
     />
-  ) : (
-    <NotSchedule />
   );
 }

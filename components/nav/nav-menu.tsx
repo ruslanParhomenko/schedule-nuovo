@@ -4,7 +4,6 @@ import { useEffect, useEffectEvent, useState, useTransition } from "react";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import { useHashParam } from "@/hooks/use-hash";
 import TabsOptions from "../tabs/tabs-options";
 import SelectOptions from "../select/select-options";
 import ThemesButton from "../buttons/themes-button";
