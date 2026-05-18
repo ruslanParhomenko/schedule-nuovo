@@ -6,18 +6,22 @@ export async function GET(req: Request) {
   const month = searchParams.get("month");
   const year = searchParams.get("year");
 
-  if (!month || !year) return new Response("Missing params", { status: 400 });
+  if (!month || !year) {
+    return new Response("Missing params", { status: 400 });
+  }
 
-  const docRef = await db
+  const collectionRef = db
     .collection("schedule-new")
     .doc(year)
     .collection("months")
     .doc(month)
     .collection("role");
 
-  const snap = await docRef.get();
+  const snap = await collectionRef.get();
 
-  if (snap.empty) return [];
+  if (snap.empty) {
+    return Response.json([]);
+  }
 
   const data = snap.docs.map((doc) => ({
     id: doc.id,
