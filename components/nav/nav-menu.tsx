@@ -90,12 +90,14 @@ export default function NavMenu({ children }: { children: React.ReactNode }) {
     swipeDuration: 500,
     preventScrollOnSwipe: true,
     onSwipedUp: () => {
+      if (!tab || tab === "swap") return;
       const currentIndex = NAV_ITEMS.indexOf(tab ?? "");
       const nextIndex = (currentIndex + 1) % NAV_ITEMS.length;
       const nextTab = NAV_ITEMS[nextIndex];
       handleTabChange(nextTab);
     },
     onSwipedDown: () => {
+      if (!tab || tab === "swap") return;
       const currentIndex = NAV_ITEMS.indexOf(tab ?? "");
       const prevIndex =
         (currentIndex - 1 + NAV_ITEMS.length) % NAV_ITEMS.length;
