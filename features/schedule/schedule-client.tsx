@@ -11,6 +11,7 @@ import SwapPage from "../swap/swap-page";
 import { SwapActionType } from "@/app/action/swap-action";
 import { Session } from "next-auth";
 import { useSearchParams } from "next/navigation";
+import NotSchedule from "@/components/page/not-schedule";
 
 export default function ScheduleClient({
   schedules,
@@ -41,6 +42,8 @@ export default function ScheduleClient({
   if (!role) return null;
 
   const schedule = schedules.find((schedule) => schedule.id === role) || null;
+
+  if (!schedule && role !== "swap") return <NotSchedule />;
 
   return (
     <>
