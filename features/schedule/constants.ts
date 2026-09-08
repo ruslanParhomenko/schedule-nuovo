@@ -27,7 +27,7 @@ export const color = {
   "20": "",
   v: "text-bl/40 bg-bl/60 border-0",
   s: "bg-[#facc15]/50 text-bl/40 border-0",
-
+  u: "bg-[#bbbb50]/50 text-bl/40 border-0",
   x: "text-rd bg-rd border-0",
 } as const;
 export const SHIFT_OPTIONS = ["7", "8", "9", "14", "18", "19", "20"];

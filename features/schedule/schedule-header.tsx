@@ -15,6 +15,9 @@ export default function ScheduleHeader({
 }) {
   const todayDay = new Date().getDate();
 
+  const minIndex = Math.max(0, todayDay - 4);
+  const maxIndex = Math.min(monthDays.length - 1, todayDay + 4);
+
   return (
     <TableBody>
       <TableRow
@@ -26,23 +29,27 @@ export default function ScheduleHeader({
         <TableCell className="w-28 p-0 front-bold text-center sticky left-0 bg-background text-bl">
           {isFooter ? "" : month?.toUpperCase() || ""}
         </TableCell>
-        {monthDays.map((day, index) => {
-          return (
-            <TableCell
-              key={day.day}
-              className={cn(
-                "w-10 cursor-pointer p-0   text-bl",
-                day.day === todayDay && "text-rd! front-bold",
-              )}
-              onClick={() => setSelectedColumn && setSelectedColumn(index)}
-            >
-              <div className="text-sm font-semibold text-center">{day.day}</div>
-              <div className="text-xs text-muted-bl text-center">
-                {day.weekday}
-              </div>
-            </TableCell>
-          );
-        })}
+        {monthDays
+          .filter((_, index) => index >= minIndex && index <= maxIndex)
+          .map((day, index) => {
+            return (
+              <TableCell
+                key={day.day}
+                className={cn(
+                  "w-10 cursor-pointer p-0   text-bl",
+                  day.day === todayDay && "text-rd! front-bold",
+                )}
+                onClick={() => setSelectedColumn && setSelectedColumn(index)}
+              >
+                <div className="text-sm font-semibold text-center">
+                  {day.day}
+                </div>
+                <div className="text-xs text-muted-bl text-center">
+                  {day.weekday}
+                </div>
+              </TableCell>
+            );
+          })}
       </TableRow>
     </TableBody>
   );

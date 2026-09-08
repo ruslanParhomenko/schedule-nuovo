@@ -17,6 +17,9 @@ export default function ScheduleBody({
           row.shifts?.[selectedColumn as number],
         );
 
+        const todayDay = new Date().getDate();
+        const minIndex = Math.max(0, todayDay - 4);
+        const maxIndex = Math.min(row.shifts.length - 1, todayDay + 4);
         return (
           <TableRow key={row.id} className="hover:text-rd border-bl/30 ">
             <TableCell
@@ -25,25 +28,27 @@ export default function ScheduleBody({
                 isSelected && "text-rd font-bold",
               )}
             >
-              {row.employee}
+              {row.employee.split(" ")[1]} {row.employee.split(" ")[0][0]}
             </TableCell>
 
-            {row.shifts?.map((day, dayIndex) => {
-              const isSelected = dayIndex === selectedColumn;
+            {row.shifts
+              ?.filter((_, index) => index >= minIndex && index <= maxIndex)
+              .map((day, dayIndex) => {
+                const isSelected = dayIndex === selectedColumn;
 
-              return (
-                <TableCell
-                  key={dayIndex}
-                  className={cn(
-                    "p-0  text-center border-x transition-colors duration-500",
-                    color[day as keyof typeof color],
-                    isSelected && "text-rd! font-bold",
-                  )}
-                >
-                  {["/", "v", "s"].includes(day) ? null : day}
-                </TableCell>
-              );
-            })}
+                return (
+                  <TableCell
+                    key={dayIndex}
+                    className={cn(
+                      "p-0  text-center border-x transition-colors duration-500",
+                      color[day as keyof typeof color],
+                      isSelected && "text-rd! font-bold",
+                    )}
+                  >
+                    {["/", "v", "s", "u"].includes(day) ? null : day}
+                  </TableCell>
+                );
+              })}
           </TableRow>
         );
       })}

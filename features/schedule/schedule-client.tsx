@@ -13,6 +13,12 @@ import { Session } from "next-auth";
 import { useSearchParams } from "next/navigation";
 import NotSchedule from "@/components/page/not-schedule";
 
+const ROLE_BY_SESSION = {
+  bar: ["barmen", "waiters"],
+  cucina: ["cook"],
+  dish: ["dish"],
+};
+
 export default function ScheduleClient({
   schedules,
   monthDays,
@@ -20,6 +26,7 @@ export default function ScheduleClient({
   employees,
   swapsList,
   session,
+  isAdmin,
 }: {
   schedules: ScheduleData[];
   monthDays: ReturnType<typeof getMonthDays>;
@@ -27,8 +34,12 @@ export default function ScheduleClient({
   employees: { id: string; name: string; role: string; mail: string }[];
   swapsList: SwapActionType[];
   session: Session | null;
+  isAdmin: boolean;
 }) {
   const role = useSearchParams().get("tab");
+
+  const roleUserBySession = session?.user?.role;
+
   const [selectedColumn, setSelectedColumn] = useState<number | null>(null);
 
   const todayDay = new Date().getDate();
@@ -40,8 +51,15 @@ export default function ScheduleClient({
   }, [todayIndex]);
 
   if (!role) return null;
-
-  const schedule = schedules.find((schedule) => schedule.id === role) || null;
+  const schedule =
+    schedules.find(
+      (schedule) =>
+        schedule.id === role &&
+        (ROLE_BY_SESSION[role as keyof typeof ROLE_BY_SESSION]?.includes(
+          roleUserBySession as string,
+        ) ||
+          isAdmin),
+    ) || null;
 
   if (!schedule && role !== "swap") return <NotSchedule />;
 

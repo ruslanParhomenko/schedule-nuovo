@@ -29,6 +29,7 @@ export default async function Page({
   }[];
 
   const adminMail = process.env.NEXT_PUBLIC_ADMIN_EMAIL?.split(",") || [];
+  const isAdmin = adminMail.includes(session?.user?.email!);
   const isAuth =
     employees.map((e) => e.mail).includes(session?.user?.email!) ||
     users.map((u) => u.mail).includes(session?.user?.email!) ||
@@ -56,6 +57,7 @@ export default async function Page({
       employees={employees}
       swapsList={swapsList}
       session={session}
+      isAdmin={isAdmin}
     />
   );
 }
