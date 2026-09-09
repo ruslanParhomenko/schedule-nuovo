@@ -31,7 +31,7 @@ export default function SelectOptions({
     >
       <SelectTrigger
         className={cn(
-          "bg-background justify-center border-0 shadow-none [&>svg]:hidden",
+          "justify-center border-0 shadow-none [&>svg]:hidden",
           className,
         )}
       >

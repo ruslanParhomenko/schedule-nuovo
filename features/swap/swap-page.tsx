@@ -45,7 +45,7 @@ export default function SwapPage({
       <SwapListTable swapsList={swapsList} employees={employees} />
 
       <div className="w-full">
-        <form action={formAction} className="space-y-4">
+        <form action={formAction} className="space-y-6">
           <SelectInput
             options={SHIFT_ACTIONS}
             name="typeSwap"
@@ -69,15 +69,7 @@ export default function SwapPage({
           <input type="hidden" name="month" value={defaultMonth} />
           <input type="hidden" name="idEmployee" value={idEmployee} />
 
-          <div className="mt-auto sticky bottom-2  flex justify-between">
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={() => router.replace("/schedule")}
-              className="w-32"
-            >
-              выход
-            </Button>
+          <div className="mt-auto sticky bottom-2  flex justify-end">
             <Button
               type="submit"
               variant="default"
@@ -88,7 +80,7 @@ export default function SwapPage({
                   : "bg-blue-500 hover:bg-blue-600"
               }`}
             >
-              {pending ? "Отправка..." : "Поменять смены"}
+              {pending ? "Отправка..." : "Отправить"}
             </Button>
           </div>
           {state?.message && (

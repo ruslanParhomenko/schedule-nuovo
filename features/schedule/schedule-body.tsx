@@ -18,7 +18,7 @@ export default function ScheduleBody({
         );
 
         const todayDay = new Date().getDate();
-        const minIndex = Math.max(0, todayDay - 4);
+        const minIndex = Math.max(0, todayDay - 2);
         const maxIndex = Math.min(row.shifts.length - 1, todayDay + 4);
         return (
           <TableRow key={row.id} className="hover:text-rd border-bl/30 ">
@@ -40,7 +40,7 @@ export default function ScheduleBody({
                   <TableCell
                     key={dayIndex}
                     className={cn(
-                      "p-0  text-center border-x transition-colors duration-500",
+                      "p-0  text-center border-l transition-colors duration-500",
                       color[day as keyof typeof color],
                       isSelected && "text-rd! font-bold",
                     )}

@@ -15,7 +15,7 @@ export default function TabsOptions({
 }) {
   return (
     <Tabs value={value} onValueChange={setValue}>
-      <TabsList className="flex h-9 md:gap-2">
+      <TabsList className="flex h-9 md:gap-2 bg-transparent">
         {options.map((item, idx) => (
           <TabsTrigger
             key={`${item}-${idx}`}
@@ -24,9 +24,15 @@ export default function TabsOptions({
             className={cn(
               "hover:text-bl w-18 cursor-pointer md:w-24",
               isPending && "opacity-50",
+              item === value && "bg-bl!",
             )}
           >
-            <span className="md:text-md text-bl block w-full truncate text-xs">
+            <span
+              className={cn(
+                "md:text-md text-bl block w-full truncate text-xs",
+                item === value && " text-white",
+              )}
+            >
               {item}
             </span>
           </TabsTrigger>

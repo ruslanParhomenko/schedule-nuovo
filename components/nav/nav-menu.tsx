@@ -80,7 +80,7 @@ export default function NavMenu({ children }: { children: React.ReactNode }) {
   const currentMonthIndex = new Date().getMonth();
 
   const filteredMonths = [
-    MONTHS[(currentMonthIndex - 1 + 12) % 12],
+    // MONTHS[(currentMonthIndex - 1 + 12) % 12],
     MONTHS[currentMonthIndex],
     MONTHS[(currentMonthIndex + 1) % 12],
   ];
@@ -89,14 +89,14 @@ export default function NavMenu({ children }: { children: React.ReactNode }) {
     delta: 50,
     swipeDuration: 500,
     preventScrollOnSwipe: true,
-    onSwipedUp: () => {
+    onSwipedLeft: () => {
       if (!tab || tab === "swap") return;
       const currentIndex = NAV_ITEMS.indexOf(tab ?? "");
       const nextIndex = (currentIndex + 1) % NAV_ITEMS.length;
       const nextTab = NAV_ITEMS[nextIndex];
       handleTabChange(nextTab);
     },
-    onSwipedDown: () => {
+    onSwipedRight: () => {
       if (!tab || tab === "swap") return;
       const currentIndex = NAV_ITEMS.indexOf(tab ?? "");
       const prevIndex =
@@ -107,7 +107,7 @@ export default function NavMenu({ children }: { children: React.ReactNode }) {
   });
 
   return (
-    <div {...handlers} className="flex h-screen flex-col justify-between">
+    <div className="flex h-screen flex-col justify-between">
       <div className="bg-background sticky top-2 z-20 my-2 flex justify-between px-4 md:gap-4">
         <div className="order-1 flex gap-4 md:order-0">
           <SelectOptions
@@ -118,7 +118,7 @@ export default function NavMenu({ children }: { children: React.ReactNode }) {
             value={month}
             onChange={setMonth}
             isLoading={isPending}
-            className="w-22 text-xs border h-8! text-bl font-bold"
+            className="w-22 text-xs  h-8! text-bl font-bold border-0 shadow-none"
           />
         </div>
 
@@ -132,7 +132,10 @@ export default function NavMenu({ children }: { children: React.ReactNode }) {
         {children}
       </div>
 
-      <div className="bg-background sticky bottom-2 z-20 flex items-center justify-center px-4 md:justify-start">
+      <div
+        {...handlers}
+        className="bg-background sticky bottom-2 z-20 flex items-center justify-center px-4 md:justify-start"
+      >
         <TabsOptions
           value={activeTab}
           setValue={handleTabChange}

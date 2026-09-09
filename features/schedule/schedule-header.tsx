@@ -15,7 +15,7 @@ export default function ScheduleHeader({
 }) {
   const todayDay = new Date().getDate();
 
-  const minIndex = Math.max(0, todayDay - 4);
+  const minIndex = Math.max(0, todayDay - 2);
   const maxIndex = Math.min(monthDays.length - 1, todayDay + 4);
 
   return (
@@ -26,8 +26,8 @@ export default function ScheduleHeader({
           isFooter ? "border-t!" : "border-b!",
         )}
       >
-        <TableCell className="w-28 p-0 front-bold text-center sticky left-0 bg-background text-bl">
-          {isFooter ? "" : month?.toUpperCase() || ""}
+        <TableCell className="w-26 front-bold text-center sticky left-0 bg-background text-bl">
+          {isFooter ? "" : month?.slice(0, 3) || ""}
         </TableCell>
         {monthDays
           .filter((_, index) => index >= minIndex && index <= maxIndex)
