@@ -1,13 +1,17 @@
 import { getEmployees } from "@/app/action/get-employee";
 import { getScheduleByMonthYear } from "@/app/action/get-schedule";
-import { getUsers } from "@/app/action/get-user";
-import { getSwapsByKey } from "@/app/action/swap-action";
-import NotAuth from "@/components/page/not-auth";
-
+import NotSchedule from "@/components/page/not-schedule";
 import SchedulePage from "@/features/schedule/schedule-page";
 import { authOptions } from "@/lib/auth";
-import { getMonthDays } from "@/utils/get-month-days";
 import { getServerSession } from "next-auth";
+
+const ADMIN_ROLE = process.env.NEXT_PUBLIC_ADMIN_ROLE;
+const ROLE_BY_SESSION = {
+  barmen: "bar",
+  waiters: "bar",
+  cook: "cucina",
+  dish: "dish",
+};
 
 export default async function Page({
   searchParams,
@@ -15,49 +19,37 @@ export default async function Page({
   searchParams: Promise<{ [key: string]: string }>;
 }) {
   const session = await getServerSession(authOptions);
-  const employees = (await getEmployees()) as {
-    id: string;
-    name: string;
-    role: string;
-    mail: string;
-  }[];
+  const employees = await getEmployees();
 
-  const users = (await getUsers()) as {
-    id: string;
-    role: string;
-    mail: string;
-  }[];
+  const isAdmin =
+    employees.find((e) => e.mail === session?.user?.email!)?.role ===
+    ADMIN_ROLE;
 
-  const adminMail = process.env.NEXT_PUBLIC_ADMIN_EMAIL?.split(",") || [];
-  const isAdmin = adminMail.includes(session?.user?.email!);
-  const isAuth =
-    employees.map((e) => e.mail).includes(session?.user?.email!) ||
-    users.map((u) => u.mail).includes(session?.user?.email!) ||
-    adminMail.includes(session?.user?.email!) ||
-    false;
+  // const isAuth =
+  //   employees
+  //     .filter((e) => e.status === "active")
+  //     .map((e) => e.mail)
+  //     .includes(session?.user?.email!) || isAdmin;
 
-  if (!isAuth) {
-    return <NotAuth name={session?.user?.name!} />;
+  const roleUserBySession = session?.user?.role;
+
+  if (!isAdmin) {
+    // return <NotAuth name={session?.user?.name!} />;
+    return <NotSchedule />;
   }
   const { month } = await searchParams;
 
   if (!month) return null;
 
   const year = new Date().getFullYear().toString();
-  const monthNumber = new Date().getMonth() + 1;
-  const schedules = await getScheduleByMonthYear(month, year);
-  const monthDays = getMonthDays({ month: month, year: year });
-  const swapsList = await getSwapsByKey(`${year}-${monthNumber}`);
 
-  return (
-    <SchedulePage
-      schedules={schedules}
-      monthDays={monthDays}
-      month={month}
-      employees={employees}
-      swapsList={swapsList}
-      session={session}
-      isAdmin={isAdmin}
-    />
-  );
+  const schedules = await getScheduleByMonthYear(month, year);
+  const schedule =
+    schedules.find(
+      (schedule) =>
+        schedule.id ===
+        ROLE_BY_SESSION[roleUserBySession as keyof typeof ROLE_BY_SESSION],
+    ) || null;
+
+  return <SchedulePage schedule={schedule} />;
 }

@@ -1,0 +1,34 @@
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+export function TabsLine({
+  options,
+  value,
+  onChange,
+  className,
+  disabled = false,
+}: {
+  options: string[];
+  value: string;
+  onChange: (value: string) => void;
+  className?: string;
+  disabled?: boolean;
+}) {
+  return (
+    <div className={className}>
+      <Tabs value={value} onValueChange={onChange}>
+        <TabsList variant="line" className="h-8 gap-4">
+          {options.map((option, index) => (
+            <TabsTrigger
+              key={`${option}-${index}`}
+              value={option}
+              className="h-6 tracking-wide"
+              disabled={disabled}
+            >
+              {option}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
+    </div>
+  );
+}

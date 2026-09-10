@@ -1,19 +1,25 @@
-import { MonthDayType } from "@/utils/get-month-days";
+"use client";
+import { getMonthDays, MonthDayType } from "@/utils/get-month-days";
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
 
 export default function ScheduleHeader({
-  monthDays,
+  selectedColumn,
   setSelectedColumn,
-  month,
   isFooter,
 }: {
-  monthDays: MonthDayType[];
+  selectedColumn: number;
   setSelectedColumn?: (index: number) => void;
-  month?: string;
   isFooter?: boolean;
 }) {
-  const todayDay = new Date().getDate();
+  const searchParams = useSearchParams();
+  const month = searchParams.get("month");
+  const nowDay = new Date();
+  const todayDay = nowDay.getDate();
+  const year = nowDay.getFullYear();
+
+  const monthDays = getMonthDays({ month: month!, year: year.toString() });
 
   const minIndex = Math.max(0, todayDay - 2);
   const maxIndex = Math.min(monthDays.length - 1, todayDay + 4);
@@ -37,9 +43,9 @@ export default function ScheduleHeader({
                 key={day.day}
                 className={cn(
                   "w-10 cursor-pointer p-0   text-bl",
-                  day.day === todayDay && "text-rd! front-bold",
+                  day.day === selectedColumn && "text-rd! front-bold",
                 )}
-                onClick={() => setSelectedColumn && setSelectedColumn(index)}
+                onClick={() => setSelectedColumn && setSelectedColumn(day.day)}
               >
                 <div className="text-sm font-semibold text-center">
                   {day.day}

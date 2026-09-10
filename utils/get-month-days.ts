@@ -29,11 +29,15 @@ export const getMonthDays = ({
   if (!month) return [];
 
   const monthIndex = MONTHS.findIndex(
-    (m) => m.toLowerCase() === month.toLowerCase()
+    (m) => m.toLowerCase() === month.toLowerCase(),
   );
+
+  console.log("monthIndex", monthIndex);
   if (monthIndex < 0) return [];
 
   const daysInMonth = new Date(Number(year), monthIndex + 1, 0).getDate();
+
+  console.log("daysInMonth", daysInMonth);
 
   return Array.from({ length: daysInMonth }, (_, i) => {
     const date = new Date(Number(year), monthIndex, i + 1);

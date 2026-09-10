@@ -23,11 +23,12 @@ export const authOptions: NextAuthOptions = {
         name: string;
         role: string;
         mail: string;
+        status: "active" | "fired";
       }[];
       if (session.user) {
-        session.user.role = employees.find(
-          (emp) => emp.mail === session.user.email,
-        )?.role;
+        session.user.role = employees
+          .filter((emp) => emp.status === "active")
+          .find((emp) => emp.mail === session.user.email)?.role;
       }
       return session;
     },

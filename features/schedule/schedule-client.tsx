@@ -1,96 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Table } from "@/components/ui/table";
-import { getMonthDays } from "@/utils/get-month-days";
 import ScheduleHeader from "./schedule-header";
 import { ScheduleData } from "@/app/action/get-schedule";
 import ScheduleBody from "./schedule-body";
-
-import SwapPage from "../swap/swap-page";
-import { SwapActionType } from "@/app/action/swap-action";
-import { Session } from "next-auth";
-import { useSearchParams } from "next/navigation";
 import NotSchedule from "@/components/page/not-schedule";
 
-const ROLE_BY_SESSION = {
-  bar: ["barmen", "waiters"],
-  cucina: ["cook"],
-  dish: ["dish"],
-};
-
 export default function ScheduleClient({
-  schedules,
-  monthDays,
-  month,
-  employees,
-  swapsList,
-  session,
-  isAdmin,
+  schedule,
 }: {
-  schedules: ScheduleData[];
-  monthDays: ReturnType<typeof getMonthDays>;
-  month: string;
-  employees: { id: string; name: string; role: string; mail: string }[];
-  swapsList: SwapActionType[];
-  session: Session | null;
-  isAdmin: boolean;
+  schedule: ScheduleData | null;
 }) {
-  const role = useSearchParams().get("tab");
-
-  const roleUserBySession = session?.user?.role;
-
-  const [selectedColumn, setSelectedColumn] = useState<number | null>(null);
-
   const todayDay = new Date().getDate();
-  const todayIndex = monthDays.findIndex((day) => day.day === todayDay);
-  useEffect(() => {
-    if (todayIndex !== -1) {
-      setSelectedColumn(todayIndex);
-    }
-  }, [todayIndex]);
 
-  if (!role) return null;
-  const schedule =
-    schedules.find(
-      (schedule) =>
-        schedule.id === role &&
-        (ROLE_BY_SESSION[role as keyof typeof ROLE_BY_SESSION]?.includes(
-          roleUserBySession as string,
-        ) ||
-          isAdmin),
-    ) || null;
+  const [selectedColumn, setSelectedColumn] = useState<number>(todayDay);
 
-  if (!schedule && role !== "swap") return <NotSchedule />;
+  if (!schedule) return <NotSchedule />;
 
   return (
-    <>
-      {role === "swap" ? (
-        <SwapPage
-          employees={employees}
-          session={session}
-          swapsList={swapsList}
-        />
-      ) : (
-        <Table className="table-fixed min-w-full opacity-100 translate-y-0">
-          <ScheduleHeader
-            monthDays={monthDays}
-            setSelectedColumn={setSelectedColumn}
-            month={month}
-          />
-          <ScheduleBody
-            schedule={schedule}
-            selectedColumn={selectedColumn || 0}
-          />
-
-          <ScheduleHeader
-            monthDays={monthDays}
-            setSelectedColumn={setSelectedColumn}
-            month={month}
-            isFooter={true}
-          />
-        </Table>
-      )}
-    </>
+    <Table className="table-fixed min-w-full opacity-100 translate-y-0">
+      <ScheduleHeader
+        setSelectedColumn={setSelectedColumn}
+        selectedColumn={selectedColumn}
+      />
+      <ScheduleBody schedule={schedule} selectedColumn={selectedColumn} />
+      <ScheduleHeader selectedColumn={selectedColumn} isFooter={true} />
+    </Table>
   );
 }
