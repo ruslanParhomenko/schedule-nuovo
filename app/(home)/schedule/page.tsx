@@ -49,6 +49,8 @@ export default async function Page({
   const cachedSchedule = await getCachedSchedule(roleKey);
   const schedule = cachedSchedule?.rowShifts;
 
+  console.log("schedule", schedule);
+
   if (!schedule) {
     // return <NotAuth name={session?.user?.name!} />;
     return <NotSchedule />;
