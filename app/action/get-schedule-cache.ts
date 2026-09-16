@@ -1,7 +1,6 @@
-// app/action/get-schedule-cache.ts
 "use server";
 
-import { unstable_cache, revalidateTag } from "next/cache";
+import { unstable_cache, updateTag } from "next/cache";
 
 type SyncScheduleData = {
   tab: string;
@@ -12,35 +11,21 @@ type SyncScheduleData = {
   }>;
 };
 
-// Переменная на уровне модуля
 let scheduleData: SyncScheduleData | null = null;
 
-// Кешируем функцию получения
 const getScheduleFromMemory = unstable_cache(
-  async (tab: string) => {
-    console.log("🔍 [CACHE] Looking for tab:", tab);
-    if (scheduleData?.tab === tab) {
-      console.log("✅ [CACHE] Found:", scheduleData.rowShifts.length, "rows");
-      return scheduleData;
-    }
-    console.log("❌ [CACHE] Not found");
-    return null;
+  async () => {
+    return scheduleData;
   },
   ["get-schedule"],
-  { revalidate: 3600, tags: ["schedule-data"] },
+  { revalidate: false, tags: ["schedule-data"] },
 );
 
-export async function getCachedSchedule(tab: string) {
-  return getScheduleFromMemory(tab);
+export async function getCachedSchedule() {
+  return getScheduleFromMemory();
 }
 
 export async function setCachedSchedule(data: SyncScheduleData) {
-  console.log(
-    "💾 [CACHE] Storing tab:",
-    data.tab,
-    "rows:",
-    data.rowShifts.length,
-  );
   scheduleData = data;
-  revalidateTag("schedule-data", "max");
+  updateTag("schedule-data");
 }

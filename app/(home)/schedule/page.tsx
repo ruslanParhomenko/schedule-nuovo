@@ -25,7 +25,7 @@ export default async function Page() {
     return <NotSchedule />;
   }
 
-  const cachedSchedule = await getCachedSchedule(roleKey);
+  const cachedSchedule = await getCachedSchedule();
 
   if (!cachedSchedule?.rowShifts) {
     return <NotSchedule />;
