@@ -21,8 +21,8 @@ export const authOptions: NextAuthOptions = {
       if (account && profile) {
         try {
           const users = (await getEmployees()).filter((u) => u.status);
-
           const dbUser = users.find((u) => u.mail === profile.email);
+
           token.role = dbUser?.role;
           token.email = dbUser?.mail;
         } catch (e) {
@@ -32,6 +32,13 @@ export const authOptions: NextAuthOptions = {
       }
 
       return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.role = token.role as string;
+        session.user.email = token.email as string;
+      }
+      return session;
     },
   },
 };
