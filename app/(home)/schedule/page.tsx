@@ -1,5 +1,6 @@
 import { getEmployees } from "@/app/action/get-employee";
 import { getScheduleByMonthYear } from "@/app/action/get-schedule";
+import { getCachedSchedule } from "@/app/action/get-schedule-cache";
 import NotSchedule from "@/components/page/not-schedule";
 import SchedulePage from "@/features/schedule/schedule-page";
 import { authOptions } from "@/lib/auth";
@@ -42,14 +43,16 @@ export default async function Page({
   if (!month) return null;
 
   const year = new Date().getFullYear().toString();
+  const roleKey =
+    ROLE_BY_SESSION[session?.user?.role as keyof typeof ROLE_BY_SESSION];
 
-  const schedules = await getScheduleByMonthYear(month, year);
-  const schedule =
-    schedules.find(
-      (schedule) =>
-        schedule.id ===
-        ROLE_BY_SESSION[roleUserBySession as keyof typeof ROLE_BY_SESSION],
-    ) || null;
+  const cachedSchedule = await getCachedSchedule(roleKey);
+  const schedule = cachedSchedule?.rowShifts;
+
+  if (!schedule) {
+    // return <NotAuth name={session?.user?.name!} />;
+    return <NotSchedule />;
+  }
 
   return <SchedulePage schedule={schedule} />;
 }

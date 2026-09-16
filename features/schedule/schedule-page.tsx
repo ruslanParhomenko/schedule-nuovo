@@ -1,11 +1,11 @@
 import { Suspense } from "react";
 import ScheduleClient from "./schedule-client";
-import { ScheduleData } from "@/app/action/get-schedule";
+import { rowShiftsType } from "./model/type";
 
 export default function SchedulePage({
   schedule,
 }: {
-  schedule: ScheduleData | null;
+  schedule: rowShiftsType[];
 }) {
   return (
     <Suspense fallback={<div>Loading...</div>}>

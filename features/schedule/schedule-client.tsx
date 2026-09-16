@@ -3,20 +3,17 @@
 import { useState } from "react";
 import { Table } from "@/components/ui/table";
 import ScheduleHeader from "./schedule-header";
-import { ScheduleData } from "@/app/action/get-schedule";
 import ScheduleBody from "./schedule-body";
-import NotSchedule from "@/components/page/not-schedule";
+import { rowShiftsType } from "./model/type";
 
 export default function ScheduleClient({
   schedule,
 }: {
-  schedule: ScheduleData | null;
+  schedule: rowShiftsType[];
 }) {
   const todayDay = new Date().getDate();
 
   const [selectedColumn, setSelectedColumn] = useState<number>(todayDay);
-
-  if (!schedule) return <NotSchedule />;
 
   return (
     <Table className="table-fixed min-w-full opacity-100 translate-y-0">

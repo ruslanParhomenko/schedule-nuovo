@@ -1,20 +1,20 @@
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { color } from "./constants";
-import { ScheduleData } from "@/app/action/get-schedule";
+import { color } from "./model/constants";
+import { rowShiftsType } from "./model/type";
 
 export default function ScheduleBody({
   schedule,
   selectedColumn,
 }: {
-  schedule: ScheduleData | null;
+  schedule: rowShiftsType[];
   selectedColumn: number;
 }) {
   const selectedIndex = selectedColumn - 1;
 
   return (
     <TableBody>
-      {schedule?.rowShifts?.map((row) => {
+      {schedule?.map((row) => {
         const isSelected = !["v", "s", ""].includes(
           row.shifts?.[selectedIndex],
         );
@@ -25,7 +25,7 @@ export default function ScheduleBody({
         const maxIndex = Math.min(row.shifts.length - 1, todayDay + 4);
 
         return (
-          <TableRow key={row.id} className="hover:text-rd border-bl/30">
+          <TableRow key={row.employeeId} className="hover:text-rd border-bl/30">
             <TableCell
               className={cn(
                 "sticky left-0 bg-background text-bl p-2 h-8 z-10 truncate text-xs",
