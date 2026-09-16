@@ -17,20 +17,21 @@ export const authOptions: NextAuthOptions = {
     signIn: "/signin",
   },
   callbacks: {
-    async session({ session }) {
-      const employees = (await getEmployees()) as {
-        id: string;
-        name: string;
-        role: string;
-        mail: string;
-        status: "active" | "fired";
-      }[];
-      if (session.user) {
-        session.user.role = employees
-          .filter((emp) => emp.status === "active")
-          .find((emp) => emp.mail === session.user.email)?.role;
+    async jwt({ token, account, profile }) {
+      if (account && profile) {
+        try {
+          const users = (await getEmployees()).filter((u) => u.status);
+
+          const dbUser = users.find((u) => u.mail === profile.email);
+          token.role = dbUser?.role;
+          token.email = dbUser?.mail;
+        } catch (e) {
+          token.role = "";
+          token.email = "";
+        }
       }
-      return session;
+
+      return token;
     },
   },
 };
