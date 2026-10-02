@@ -1,8 +1,9 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getCachedSchedule } from "@/app/action/get-schedule-cache";
+
 import NotSchedule from "@/components/page/not-schedule";
 import SchedulePage from "@/features/schedule/schedule-page";
+import { getCachedSchedule } from "@/features/schedule/actions/get-schedule-data";
 
 const ROLE_BY_SESSION = {
   barmen: "bar",
@@ -11,10 +12,14 @@ const ROLE_BY_SESSION = {
   dish: "dish",
 };
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string }>;
+}) {
   const session = await getServerSession(authOptions);
 
-  if (!session) {
+  if (!session?.user?.role) {
     return <NotSchedule />;
   }
 
@@ -24,12 +29,22 @@ export default async function Page() {
   if (!roleKey) {
     return <NotSchedule />;
   }
+  const { month } = await searchParams;
+  const year = new Date().getFullYear().toString();
 
-  const cachedSchedule = await getCachedSchedule();
-
-  if (!cachedSchedule?.rowShifts) {
+  if (!month || !year) {
     return <NotSchedule />;
   }
 
-  return <SchedulePage schedule={cachedSchedule.rowShifts} />;
+  const cachedSchedule = await getCachedSchedule({ year, month, roleKey });
+
+  console.log("cachedSchedule", cachedSchedule);
+
+  console.log("session", session);
+
+  if (!cachedSchedule) {
+    return <NotSchedule />;
+  }
+
+  return <SchedulePage schedule={cachedSchedule} />;
 }

@@ -2,6 +2,21 @@ import GoogleProvider from "next-auth/providers/google";
 import type { NextAuthOptions } from "next-auth";
 import { getEmployees } from "@/app/action/get-employee";
 
+const USER_EMAIL = process.env.USER_EMAIL?.toLowerCase();
+
+async function resolveUser(email?: string | null) {
+  const mail = email?.toLowerCase();
+  if (!mail) return null;
+
+  if (USER_EMAIL && mail === USER_EMAIL) {
+    return { role: "user", name: "user", email: mail };
+  }
+
+  const employees = (await getEmployees()).filter((u) => u.status);
+  const dbUser = employees.find((u) => u.mail?.toLowerCase() === mail);
+  return dbUser ? { role: dbUser.role, name: dbUser.name, email: mail } : null;
+}
+
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
@@ -12,31 +27,25 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
+    maxAge: 60 * 60 * 12,
   },
   pages: {
     signIn: "/signin",
   },
+  debug: false,
   callbacks: {
     async jwt({ token, account, profile }) {
       if (account && profile) {
-        try {
-          const users = (await getEmployees()).filter((u) => u.status);
-          const dbUser = users.find((u) => u.mail === profile.email);
-
-          token.role = dbUser?.role;
-          token.email = dbUser?.mail;
-        } catch (e) {
-          token.role = "";
-          token.email = "";
-        }
+        const user = await resolveUser(profile.email);
+        if (user) Object.assign(token, user);
       }
-
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.role = token.role as string;
         session.user.email = token.email as string;
+        session.user.name = token.name as string;
       }
       return session;
     },

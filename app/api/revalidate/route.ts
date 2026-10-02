@@ -1,4 +1,3 @@
-// app/api/revalidate/route.ts
 import { revalidateTag } from "next/cache";
 
 export async function POST(req: Request) {
