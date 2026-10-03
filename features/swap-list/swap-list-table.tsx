@@ -13,6 +13,8 @@ import { useSession } from "next-auth/react";
 import { Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
 
+const userEmail = process.env.USER_EMAIL;
+
 export default function SwapListTable({
   swapsList,
   employees,
@@ -25,7 +27,7 @@ export default function SwapListTable({
 
   const idUser = employees.find((e) => e.mail === emailUser)?.id;
 
-  const isAdmin = emailUser === "parhomenkogm@gmail.com";
+  const isAdmin = emailUser === userEmail;
   const reversedList = [...swapsList].reverse();
 
   return (
