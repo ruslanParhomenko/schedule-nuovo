@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 export const NotData = ({ exitButton }: { exitButton?: boolean }) => {
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-20">
-      <Label className="text-center text-2xl text-red-600">not data</Label>
+      <Label className="text-center text-2xl text-red-600"> not data </Label>
       {exitButton && (
         <Button
           type="button"
