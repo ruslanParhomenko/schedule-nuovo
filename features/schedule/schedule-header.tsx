@@ -21,8 +21,8 @@ export default function ScheduleHeader({
 
   const monthDays = getMonthDays({ month: month!, year: year.toString() });
 
-  const minIndex = Math.max(0, todayDay - 2);
-  const maxIndex = Math.min(monthDays.length - 1, todayDay + 4);
+  const minIndex = Math.max(0, todayDay - 1);
+  const maxIndex = Math.min(monthDays.length - 1, todayDay + 7);
 
   return (
     <TableBody>

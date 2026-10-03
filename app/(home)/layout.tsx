@@ -9,7 +9,7 @@ export default function HomeLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen flex-col justify-between">
+    <div className="flex h-dvh md:px-8 flex-col justify-between">
       <Suspense fallback={null}>
         <NavHeader />
       </Suspense>

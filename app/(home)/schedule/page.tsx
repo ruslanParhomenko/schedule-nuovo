@@ -10,6 +10,7 @@ const ROLE_BY_SESSION = {
   waiters: "bar",
   cook: "cucina",
   dish: "dish",
+  staff: "bar",
 };
 
 export default async function Page({
@@ -37,10 +38,6 @@ export default async function Page({
   }
 
   const cachedSchedule = await getCachedSchedule({ year, month, roleKey });
-
-  console.log("cachedSchedule", cachedSchedule);
-
-  console.log("session", session);
 
   if (!cachedSchedule) {
     return <NotSchedule />;

@@ -21,8 +21,8 @@ export default function ScheduleBody({
 
         const todayDay = new Date().getDate();
 
-        const minIndex = Math.max(0, todayDay - 2);
-        const maxIndex = Math.min(row.shifts.length - 1, todayDay + 4);
+        const minIndex = Math.max(0, todayDay - 1);
+        const maxIndex = Math.min(row.shifts.length - 1, todayDay + 7);
 
         return (
           <TableRow key={row.employeeId} className="hover:text-rd border-bl/30">

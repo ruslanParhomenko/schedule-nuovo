@@ -1,6 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { MONTHS } from "./utils/get-month-days";
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -19,6 +20,14 @@ export async function proxy(request: NextRequest) {
 
   if (!token.role) {
     return NextResponse.redirect(new URL("/no-access", request.url));
+  }
+
+  if (token.role === "staff" && pathname !== "/schedule") {
+    const currentDate = new Date();
+    const month = MONTHS[currentDate.getMonth()];
+    return NextResponse.redirect(
+      new URL(`/schedule?month=${month}`, request.url),
+    );
   }
 
   return NextResponse.next();

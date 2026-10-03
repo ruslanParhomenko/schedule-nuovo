@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { cn } from "@/lib/utils";
+import { Label } from "../ui/label";
 
 type Option = { value: string; label: string };
 
@@ -26,15 +27,23 @@ export default function SelectInput({
   const [value, setValue] = useState<string>("");
 
   return (
-    <>
+    <div className="w-full flex flex-col items-center justify-center">
+      <Label
+        htmlFor={name}
+        className="block w-full text-center text-md  mb-6 cursor-pointer h-6"
+      >
+        {value ? "" : placeholder}
+      </Label>
+
       <Select value={value} onValueChange={setValue}>
         <SelectTrigger
+          id={name}
           className={cn(
-            "[&>svg]:hidden justify-start w-full  text-blue-500 h-12!",
+            "[&>svg]:hidden justify-center md:w-120 w-full text-blue-600 bg-border h-14! font-bold",
             className,
           )}
         >
-          <SelectValue placeholder={placeholder ?? ""} />
+          <SelectValue placeholder="" className="font-bold" />
         </SelectTrigger>
 
         <SelectContent>
@@ -51,6 +60,6 @@ export default function SelectInput({
       </Select>
 
       <input type="hidden" name={name} value={value} />
-    </>
+    </div>
   );
 }

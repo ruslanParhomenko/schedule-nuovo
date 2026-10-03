@@ -9,20 +9,27 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import { Label } from "../ui/label";
 
 export function DatePInput() {
   const [date, setDate] = useState<Date | undefined>();
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 justify-center items-center">
+      <Label
+        htmlFor="date"
+        className="block w-full text-center text-md  mb-6 cursor-pointer h-6"
+      >
+        {date ? "" : "выберите дату"}
+      </Label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="w-full justify-start text-left font-normal h-12"
+            className="w-full md:w-120 justify-center items-center tracking-wider font-bold h-14 bg-border"
           >
-            {date ? format(date, "dd.MM.yyyy") : "Выберите дату"}
+            {date ? format(date, "dd.MM.yyyy") : ""}
           </Button>
         </PopoverTrigger>
 
